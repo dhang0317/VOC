@@ -311,8 +311,11 @@ function setCachedExercise(cacheKey, data) {
  * @param {object}   options   - 選項配置
  */
 export async function generateExercise(words, lang, difficulty, options = {}) {
-  const wordsPerArticle = parseInt(options.wordsPerArticle, 10) || 3;
-  const targetArticles = options.numArticles ? parseInt(options.numArticles, 10) : null;
+  const isAutoWords = options.wordsPerArticle === "auto" || !options.wordsPerArticle;
+  const isAutoArticles = options.numArticles === "auto" || !options.numArticles;
+  
+  const wordsPerArticle = isAutoWords ? null : parseInt(options.wordsPerArticle, 10);
+  const targetArticles = isAutoArticles ? null : parseInt(options.numArticles, 10);
   const historySummary = options.historySummary || null;
   const selectedTypes = options.selectedTypes || ["article", "sentence", "spelling"];
 
@@ -320,7 +323,7 @@ export async function generateExercise(words, lang, difficulty, options = {}) {
   const wantSentences = selectedTypes.includes("sentence") || selectedTypes.includes("spelling");
 
   // 1. 檢查本地快取（若無歷史錯誤差異，可直接命中極速回傳，節省 100% Token）
-  const cacheKey = generateCacheKey(words, selectedTypes, difficulty, lang);
+  const cacheKey = generateCacheKey(words, selectedTypes, difficulty, lang + `_w${options.wordsPerArticle}_a${options.numArticles}`);
   if (!historySummary) {
     const cached = getCachedExercise(cacheKey);
     if (cached) {
@@ -331,7 +334,8 @@ export async function generateExercise(words, lang, difficulty, options = {}) {
 
   const chunks = [];
   if (wantArticles) {
-    if (targetArticles && targetArticles > 0) {
+    if (!isAutoWords && !isAutoArticles) {
+      // 兩者皆指定
       for (let i = 0; i < targetArticles; i++) {
         const start = i * wordsPerArticle;
         const slice = words.slice(start, start + wordsPerArticle);
@@ -340,9 +344,25 @@ export async function generateExercise(words, lang, difficulty, options = {}) {
           chunks.push(words.slice(0, Math.min(wordsPerArticle, words.length)));
         }
       }
-    } else {
+    } else if (!isAutoWords && isAutoArticles) {
+      // 指定每篇字數，篇數由 AI 或總單字量均分
       for (let i = 0; i < words.length; i += wordsPerArticle) {
         chunks.push(words.slice(i, i + wordsPerArticle));
+      }
+    } else if (isAutoWords && !isAutoArticles) {
+      // 指定篇數，每篇字數平均分配
+      const numArts = Math.max(1, targetArticles);
+      const perArt = Math.max(1, Math.ceil(words.length / numArts));
+      for (let i = 0; i < numArts; i++) {
+        const slice = words.slice(i * perArt, (i + 1) * perArt);
+        if (slice.length > 0) chunks.push(slice);
+      }
+    } else {
+      // 全由 AI 自行判斷最佳篇數與篇幅分組 (Auto)
+      // 若單字量 <= 6 篇幅 1 篇；6~12 篇幅 1~2 篇；>12 篇幅每 4~6 字一篇
+      const idealChunkSize = words.length <= 6 ? words.length : (words.length <= 12 ? Math.ceil(words.length / 2) : 5);
+      for (let i = 0; i < words.length; i += idealChunkSize) {
+        chunks.push(words.slice(i, i + idealChunkSize));
       }
     }
 

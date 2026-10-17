@@ -43,41 +43,49 @@
             </div>
           </div>
 
-          <!-- Param 2: Target Words Per Article (Slider 1~100) -->
+          <!-- Param 2: Target Words Per Article -->
           <div class="flex flex-col gap-1.5 pt-2 border-t border-border-glass-hairline/40">
             <div class="flex items-center justify-between">
               <label class="text-[11px] font-semibold text-primary" for="slider-words">每篇字數</label>
               <div class="flex items-center gap-1.5">
-                <span class="text-[10px] text-text-dim">單字量</span>
-                <span id="slider-words-val" class="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-white text-black shadow-sm">3</span>
+                <button type="button" id="btn-auto-words" class="px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all bg-white text-black border-white shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                  ✨ AI 自行判斷
+                </button>
+                <span id="slider-words-val" class="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-white/10 text-primary border border-white/10 hidden">--</span>
               </div>
             </div>
-            <input type="range" id="slider-words" min="1" max="100" value="3" class="w-full accent-white h-1.5 bg-white/20 rounded-lg cursor-pointer transition-all">
-            <div class="flex items-center justify-between text-[9px] font-mono text-text-dim px-0.5">
-              <span>1</span>
-              <span>25</span>
-              <span>50</span>
-              <span>75</span>
-              <span>100</span>
+            <div id="words-slider-box" class="flex flex-col gap-1 opacity-50 pointer-events-none transition-opacity">
+              <input type="range" id="slider-words" min="1" max="100" value="3" class="w-full accent-white h-1.5 bg-white/20 rounded-lg cursor-pointer transition-all">
+              <div class="flex items-center justify-between text-[9px] font-mono text-text-dim px-0.5">
+                <span>1</span>
+                <span>25</span>
+                <span>50</span>
+                <span>75</span>
+                <span>100</span>
+              </div>
             </div>
           </div>
 
-          <!-- Param 3: Number of Articles (Slider 1~100) -->
+          <!-- Param 3: Number of Articles -->
           <div class="flex flex-col gap-1.5 pt-2 border-t border-border-glass-hairline/40">
             <div class="flex items-center justify-between">
               <label class="text-[11px] font-semibold text-primary" for="slider-articles">篇數</label>
               <div class="flex items-center gap-1.5">
-                <span class="text-[10px] text-text-dim">生成篇幅</span>
-                <span id="slider-articles-val" class="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-white text-black shadow-sm">1</span>
+                <button type="button" id="btn-auto-articles" class="px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all bg-white text-black border-white shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                  ✨ AI 自行判斷
+                </button>
+                <span id="slider-articles-val" class="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-white/10 text-primary border border-white/10 hidden">--</span>
               </div>
             </div>
-            <input type="range" id="slider-articles" min="1" max="100" value="1" class="w-full accent-white h-1.5 bg-white/20 rounded-lg cursor-pointer transition-all">
-            <div class="flex items-center justify-between text-[9px] font-mono text-text-dim px-0.5">
-              <span>1 篇</span>
-              <span>25 篇</span>
-              <span>50 篇</span>
-              <span>75 篇</span>
-              <span>100 篇</span>
+            <div id="articles-slider-box" class="flex flex-col gap-1 opacity-50 pointer-events-none transition-opacity">
+              <input type="range" id="slider-articles" min="1" max="100" value="1" class="w-full accent-white h-1.5 bg-white/20 rounded-lg cursor-pointer transition-all">
+              <div class="flex items-center justify-between text-[9px] font-mono text-text-dim px-0.5">
+                <span>1 篇</span>
+                <span>25 篇</span>
+                <span>50 篇</span>
+                <span>75 篇</span>
+                <span>100 篇</span>
+              </div>
             </div>
           </div>
 
@@ -268,8 +276,8 @@
   let selectedWords = new Set(getCurrentBank().words);
 
   let currentLang = "en";
-  let currentWordsPerArticle = 3;
-  let currentNumArticles = 2;
+  let currentWordsPerArticle = "auto";
+  let currentNumArticles = "auto";
 
   requireAuth((user) => {
     const nameEl = document.getElementById("nav-user-name");
@@ -589,9 +597,35 @@
     showToast(`Language: ${idx === 0 ? 'English' : 'Traditional Chinese'}`);
   });
 
-  // ── Range Sliders (1 ~ 100) ──
+  // ── Range Sliders & AI Auto Modes ──
+  const btnAutoWords = document.getElementById('btn-auto-words');
+  const wordsSliderBox = document.getElementById('words-slider-box');
   const sliderWords = document.getElementById('slider-words');
   const sliderWordsVal = document.getElementById('slider-words-val');
+
+  function setWordsAutoMode(isAuto) {
+    if (isAuto) {
+      currentWordsPerArticle = "auto";
+      btnAutoWords?.classList.add('bg-white', 'text-black', 'border-white', 'shadow-[0_0_10px_rgba(255,255,255,0.3)]');
+      btnAutoWords?.classList.remove('bg-transparent', 'text-text-dim', 'border-white/20');
+      sliderWordsVal?.classList.add('hidden');
+      wordsSliderBox?.classList.add('opacity-50', 'pointer-events-none');
+    } else {
+      currentWordsPerArticle = parseInt(sliderWords.value, 10) || 3;
+      btnAutoWords?.classList.remove('bg-white', 'text-black', 'border-white', 'shadow-[0_0_10px_rgba(255,255,255,0.3)]');
+      btnAutoWords?.classList.add('bg-transparent', 'text-text-dim', 'border-white/20');
+      sliderWordsVal?.classList.remove('hidden');
+      if (sliderWordsVal) sliderWordsVal.textContent = currentWordsPerArticle;
+      wordsSliderBox?.classList.remove('opacity-50', 'pointer-events-none');
+    }
+  }
+
+  btnAutoWords?.addEventListener('click', () => {
+    const willBeAuto = currentWordsPerArticle !== "auto";
+    setWordsAutoMode(willBeAuto);
+    showToast(willBeAuto ? "每篇字數：由 AI 自行判斷" : `每篇字數：自訂為 ${sliderWords.value} 字`);
+  });
+
   if (sliderWords) {
     sliderWords.addEventListener('input', (e) => {
       const val = parseInt(e.target.value, 10) || 1;
@@ -603,8 +637,34 @@
     });
   }
 
+  const btnAutoArticles = document.getElementById('btn-auto-articles');
+  const articlesSliderBox = document.getElementById('articles-slider-box');
   const sliderArticles = document.getElementById('slider-articles');
   const sliderArticlesVal = document.getElementById('slider-articles-val');
+
+  function setArticlesAutoMode(isAuto) {
+    if (isAuto) {
+      currentNumArticles = "auto";
+      btnAutoArticles?.classList.add('bg-white', 'text-black', 'border-white', 'shadow-[0_0_10px_rgba(255,255,255,0.3)]');
+      btnAutoArticles?.classList.remove('bg-transparent', 'text-text-dim', 'border-white/20');
+      sliderArticlesVal?.classList.add('hidden');
+      articlesSliderBox?.classList.add('opacity-50', 'pointer-events-none');
+    } else {
+      currentNumArticles = parseInt(sliderArticles.value, 10) || 1;
+      btnAutoArticles?.classList.remove('bg-white', 'text-black', 'border-white', 'shadow-[0_0_10px_rgba(255,255,255,0.3)]');
+      btnAutoArticles?.classList.add('bg-transparent', 'text-text-dim', 'border-white/20');
+      sliderArticlesVal?.classList.remove('hidden');
+      if (sliderArticlesVal) sliderArticlesVal.textContent = `${currentNumArticles} 篇`;
+      articlesSliderBox?.classList.remove('opacity-50', 'pointer-events-none');
+    }
+  }
+
+  btnAutoArticles?.addEventListener('click', () => {
+    const willBeAuto = currentNumArticles !== "auto";
+    setArticlesAutoMode(willBeAuto);
+    showToast(willBeAuto ? "篇數：由 AI 自行判斷" : `篇數：自訂為 ${sliderArticles.value} 篇`);
+  });
+
   if (sliderArticles) {
     sliderArticles.addEventListener('input', (e) => {
       const val = parseInt(e.target.value, 10) || 1;
@@ -767,14 +827,14 @@
     }
 
     let wordsToUse = Array.from(selectedWords);
-    if (currentNumArticles) {
-      const needed = currentNumArticles * currentWordsPerArticle;
+    if (currentNumArticles !== "auto" && currentWordsPerArticle !== "auto") {
+      const needed = Number(currentNumArticles) * Number(currentWordsPerArticle);
       if (wordsToUse.length > needed) {
         wordsToUse = wordsToUse.slice(0, needed);
       }
     } else {
-      if (wordsToUse.length > 20) {
-        wordsToUse = wordsToUse.slice(0, 20);
+      if (wordsToUse.length > 25) {
+        wordsToUse = wordsToUse.slice(0, 25);
       }
     }
 
