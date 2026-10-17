@@ -45,8 +45,8 @@ export function showConfirmModal({
 
     overlay.innerHTML = `
       <div class="modal-box" style="max-width: 400px; text-align: center; border-radius: 20px; padding: 26px 22px;">
-        <div style="width: 48px; height: 48px; border-radius: 50%; background: ${isDanger ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.1)'}; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; font-size: 22px;">
-          ${isDanger ? '⚠️' : '❓'}
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: ${isDanger ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.1)'}; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;">
+          <span class="material-symbols-outlined" style="font-size: 24px; color: ${isDanger ? '#ef4444' : '#ffffff'};">${isDanger ? 'warning' : 'help'}</span>
         </div>
         <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px;">${title}</h3>
         <p style="font-size: 0.9rem; color: #a3a3a3; line-height: 1.5; margin-bottom: 22px;">${message}</p>
@@ -109,8 +109,8 @@ export function showPromptModal({
 
     overlay.innerHTML = `
       <div class="modal-box" style="max-width: 400px; text-align: center; border-radius: 20px; padding: 26px 22px;">
-        <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; font-size: 22px;">
-          📁
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;">
+          <span class="material-symbols-outlined" style="font-size: 24px; color: #ffffff;">folder</span>
         </div>
         <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px;">${title}</h3>
         ${message ? `<p style="font-size: 0.9rem; color: #a3a3a3; line-height: 1.5; margin-bottom: 16px;">${message}</p>` : ''}
@@ -524,11 +524,11 @@ export function initTextSelectionTranslator() {
       const alreadyInBank = isWordInVocabulary(currentSelectedWord);
       if (alreadyInBank) {
         addBtn.className = "px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-neutral-400 border border-white/15 cursor-not-allowed flex items-center gap-1";
-        addBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">check</span><span>✓ 已在單字庫</span>`;
+        addBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">check</span><span>已在單字庫</span>`;
         addBtn.disabled = true;
       } else {
         addBtn.className = "px-3 py-1 rounded-full text-xs font-semibold bg-white text-black hover:bg-neutral-200 transition-all flex items-center gap-1 shadow-sm";
-        addBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">bookmark_add</span><span>＋ 收錄至單字庫</span>`;
+        addBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">bookmark_add</span><span>收錄至單字庫</span>`;
         addBtn.disabled = false;
       }
 
@@ -568,7 +568,7 @@ export function initTextSelectionTranslator() {
     if (ok) {
       showToast(`已將「${currentSelectedWord}」收錄至單字庫！`);
       addBtn.className = "px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-neutral-400 border border-white/15 cursor-not-allowed flex items-center gap-1";
-      addBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">check</span><span>✓ 已在單字庫</span>`;
+      addBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">check</span><span>已在單字庫</span>`;
       addBtn.disabled = true;
 
       setTimeout(() => {

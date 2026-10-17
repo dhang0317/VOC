@@ -155,7 +155,7 @@
 
             <button id="btn-practice-weak-words" type="button" class="w-full py-2 px-3 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-bold transition-all shadow-[0_0_12px_rgba(255,255,255,0.25)] flex items-center justify-center gap-1.5 cursor-pointer">
               <span class="material-symbols-outlined text-[15px] text-amber-500">bolt</span>
-              <span>⚡ 練習常錯弱點單字</span>
+              <span>練習常錯弱點單字</span>
             </button>
 
             <div class="flex flex-wrap gap-1.5 pt-0.5 max-h-[140px] overflow-y-auto" id="missed-words-container">
@@ -369,7 +369,7 @@
                     : 'opacity-40 text-text-dim bg-white/5 border border-white/10 cursor-not-allowed'
                 }" data-idx="${itemIdx}" ${!hasMissed ? 'disabled title="全數答對，無需重練"' : 'title="使用本次答錯的單字生成新測驗"'}>
                   <span class="material-symbols-outlined text-[14px]">psychology</span>
-                  <span>${hasMissed ? '🎯 針對此篇錯題重新出題' : '🎯 全數答對無需重練'}</span>
+                  <span>${hasMissed ? '針對此篇錯題重新出題' : '全數答對無需重練'}</span>
                 </button>
 
                 <!-- 既有：舊題重做 -->
