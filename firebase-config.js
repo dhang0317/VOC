@@ -23,15 +23,15 @@ import {
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase 設定 (happy-6b5bb)
+// Firebase 設定 (vocu-9b4a1)
 const firebaseConfig = {
-  apiKey: "AIzaSyAXSyYp1HPW2-RMpikqRSoFRmPH-f8AIek",
-  authDomain: "happy-6b5bb.firebaseapp.com",
-  databaseURL: "https://happy-6b5bb-default-rtdb.firebaseio.com",
-  projectId: "happy-6b5bb",
-  storageBucket: "happy-6b5bb.firebasestorage.app",
-  messagingSenderId: "274950039210",
-  appId: "1:274950039210:web:1ff6bdc332aa9c2689d2d3"
+  apiKey: "AIzaSyALN2XulFFEqp27bX9Awk4W4exd-Ps5was",
+  authDomain: "vocu-9b4a1.firebaseapp.com",
+  projectId: "vocu-9b4a1",
+  storageBucket: "vocu-9b4a1.firebasestorage.app",
+  messagingSenderId: "989029634348",
+  appId: "1:989029634348:web:47b7e34367b496232c5c89",
+  measurementId: "G-290CSNPKZH"
 };
 
 const app  = initializeApp(firebaseConfig);
