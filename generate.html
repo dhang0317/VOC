@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>VocabFill — Precision Language Mastery</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link rel="stylesheet" href="style.css"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error-container": "#ffdad6", "inverse-on-surface": "#303030", "inverse-surface": "#e2e2e2", "secondary-container": "#484949", "canvas-black": "#000000", "secondary-fixed": "#e3e2e2", "error-container": "#93000a", "on-tertiary": "#003824", "inverse-primary": "#5d5f5f", "outline-variant": "#444748", "surface-glass-elevated": "rgba(255, 255, 255, 0.15)", "surface-container-low": "#1b1b1b", "border-glass-hairline": "rgba(255, 255, 255, 0.15)", "border-glass-active": "rgba(255, 255, 255, 0.3)", "on-primary-container": "#636565", "primary-fixed": "#e2e2e2", "on-background": "#e2e2e2", "surface": "#131313", "text-dim": "#737373", "on-surface": "#e2e2e2", "on-tertiary-fixed": "#002113", "surface-container-high": "#2a2a2a", "surface-container-lowest": "#0e0e0e", "surface-container-highest": "#353535", "on-primary": "#2f3131", "surface-glass-medium": "rgba(255, 255, 255, 0.08)", "outline": "#8e9192", "feedback-error-glass": "rgba(239, 68, 68, 0.2)", "on-error": "#690005", "feedback-error": "#ef4444", "error": "#ffb4ab", "on-tertiary-container": "#00734e", "on-surface-variant": "#c4c7c8", "on-secondary-fixed": "#1a1c1c", "surface-tint": "#c6c6c7", "tertiary-container": "#6ffbbe", "primary-container": "#e2e2e2", "feedback-success": "#10b981", "on-secondary-fixed-variant": "#464747", "tertiary-fixed-dim": "#4edea3", "on-secondary": "#2f3131", "secondary": "#c7c6c6", "feedback-success-glass": "rgba(16, 185, 129, 0.18)", "on-primary-fixed-variant": "#454747", "surface-dim": "#131313", "surface-glass-subtle": "rgba(255, 255, 255, 0.04)", "on-tertiary-fixed-variant": "#005236", "primary": "#ffffff", "surface-variant": "#353535", "border-glass-focus": "rgba(255, 255, 255, 0.5)", "on-primary-fixed": "#1a1c1c", "tertiary-fixed": "#6ffbbe", "secondary-fixed-dim": "#c7c6c6", "primary-fixed-dim": "#c6c6c7", "background": "#131313", "tertiary": "#ffffff", "on-secondary-container": "#b8b8b8", "surface-container": "#1f1f1f", "surface-bright": "#393939" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "margin": "1rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "margin-desktop": "2rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "gutter": "1rem", "space-xl": "2.5rem", "space-sm": "0.5rem" }, "fontFamily": { "body-default": [ "Geist" ], "caption": [ "Geist" ], "label-md": [ "Geist" ], "body-reading-mobile": [ "Geist" ], "body-reading": [ "Geist" ], "headline-sm": [ "Geist" ], "label-sm": [ "Geist" ], "headline-lg": [ "Geist" ], "interactive-blank": [ "Geist" ], "headline-xl-mobile": [ "Geist" ], "headline-xl": [ "Geist" ] }, "fontSize": { "body-default": [ "0.9375rem", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" } ], "caption": [ "0.75rem", { "lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500" } ], "label-md": [ "0.875rem", { "lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500" } ], "body-reading-mobile": [ "1rem", { "lineHeight": "2.0", "letterSpacing": "0.01em", "fontWeight": "400" } ], "body-reading": [ "1.0625rem", { "lineHeight": "2.2", "letterSpacing": "0.01em", "fontWeight": "400" } ], "headline-sm": [ "1.15rem", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "label-sm": [ "0.8125rem", { "lineHeight": "1.3", "letterSpacing": "0.03em", "fontWeight": "500" } ], "headline-lg": [ "1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "interactive-blank": [ "1rem", { "lineHeight": "1.5", "letterSpacing": "0.05em", "fontWeight": "600" } ], "headline-xl-mobile": [ "1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.03em", "fontWeight": "800" } ], "headline-xl": [ "2.4rem", { "lineHeight": "1.2", "letterSpacing": "-0.04em", "fontWeight": "800" } ] } } } };</script></head><body class="bg-canvas-black font-body-default text-body-default text-on-surface antialiased min-h-screen selection:bg-surface-glass-elevated selection:text-primary"><header class="fixed top-0 inset-x-0 z-50 bg-black/60 backdrop-blur-2xl"><div class="h-20 max-w-[1000px] mx-auto px-margin md:px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group" href="generate.html"><div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-95"><span class="material-symbols-outlined text-on-primary text-[15px]">edit_square</span></div><span class="font-headline-sm text-headline-sm text-primary tracking-tight">VocabFill</span></a><nav class="hidden md:flex items-center gap-space-xs p-1 bg-surface-glass-subtle rounded-full backdrop-blur-md" data-active-classes="bg-surface-glass-medium text-primary shadow-[0_0_16px_rgba(255,255,255,0.08)]"><a aria-current="page" class="px-space-md py-1.5 rounded-full font-label-md transition-all bg-surface-glass-medium text-primary shadow-[0_0_16px_rgba(255,255,255,0.08)]" href="generate.html">Generator</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-glass-medium transition-all" href="practice.html">Practice</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-glass-medium transition-all" href="history.html">History</a></nav></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm pl-space-sm pr-space-md py-1 rounded-full bg-surface-glass-subtle backdrop-blur-md"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden sm:flex flex-col text-left"><span class="font-label-sm text-label-sm text-primary leading-none"><span id="nav-user-name">User</span></span><span class="font-caption text-caption text-text-dim leading-none mt-0.5"><span id="nav-user-initial">U</span></span></div></div></div></div></header>
+<!-- Minimal Context Notification Banner -->
+<div class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-[300] backdrop-blur-2xl bg-surface-container-lowest/90 px-space-md py-2.5 rounded-full shadow-2xl flex items-center gap-space-sm border border-border-glass-active transition-all duration-300" id="toast-banner">
+<span class="w-2 h-2 rounded-full bg-feedback-success animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary tracking-wide" id="toast-text">Lexical synthesis parameters refreshed</span>
+</div>
+<main class="w-full pt-20 bg-canvas-black h-screen overflow-hidden">
+  <div class="max-w-[1360px] mx-auto px-4 md:px-8 h-full">
+    
+    <span id="selected-counter" class="hidden">0</span>
+
+    <!-- Dual-Column Layout: Left Sidebar + Right Stage (Independent Scrolling) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start h-full py-4">
+      
+      <!-- LEFT SIDEBAR: Controls, Parameters & Synthesize CTA (col-span-4, Independent Scrollable) -->
+      <aside class="lg:col-span-4 h-full overflow-y-auto pr-1 flex flex-col gap-3 bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline rounded-xl p-3.5 md:p-4 shadow-xl">
+        
+        <div class="flex items-center justify-between border-b border-border-glass-hairline/60 pb-2">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-primary text-[17px]">instant_mix</span>
+            <h2 class="text-xs md:text-sm font-bold text-primary tracking-wide">出題矩陣設定</h2>
+          </div>
+          <button type="button" id="btn-api-key-config" class="flex items-center gap-1 text-[10px] text-primary hover:text-white bg-white/10 hover:bg-white/20 border border-white/20 px-2 py-0.5 rounded-full transition-all cursor-pointer" title="設定 Google Gemini API Key">
+            <span class="material-symbols-outlined text-[13px] text-amber-400">key</span>
+            <span id="api-key-status-text">API Key</span>
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-2.5">
+          <!-- Param 1: Target Language -->
+          <div class="flex items-center justify-between gap-2">
+            <label class="text-[11px] font-semibold text-primary">語言</label>
+            <div class="flex items-center p-0.5 rounded-full bg-black/60 border border-border-glass-hairline gap-1">
+              <button class="lang-pill px-3 py-0.5 rounded-full text-xs font-semibold bg-white text-black shadow-sm transition-all" type="button">
+                English
+              </button>
+              <button class="lang-pill px-3 py-0.5 rounded-full text-xs font-normal text-on-surface-variant hover:text-primary transition-all" type="button">
+                繁中
+              </button>
+            </div>
+          </div>
+
+          <!-- Param 2: Target Words Per Article (Slider 1~100) -->
+          <div class="flex flex-col gap-1.5 pt-2 border-t border-border-glass-hairline/40">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-semibold text-primary" for="slider-words">每篇字數</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-text-dim">單字量</span>
+                <span id="slider-words-val" class="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-white text-black shadow-sm">3</span>
+              </div>
+            </div>
+            <input type="range" id="slider-words" min="1" max="100" value="3" class="w-full accent-white h-1.5 bg-white/20 rounded-lg cursor-pointer transition-all">
+            <div class="flex items-center justify-between text-[9px] font-mono text-text-dim px-0.5">
+              <span>1</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <!-- Param 3: Number of Articles (Slider 1~100) -->
+          <div class="flex flex-col gap-1.5 pt-2 border-t border-border-glass-hairline/40">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-semibold text-primary" for="slider-articles">篇數</label>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-text-dim">生成篇幅</span>
+                <span id="slider-articles-val" class="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-white text-black shadow-sm">1</span>
+              </div>
+            </div>
+            <input type="range" id="slider-articles" min="1" max="100" value="1" class="w-full accent-white h-1.5 bg-white/20 rounded-lg cursor-pointer transition-all">
+            <div class="flex items-center justify-between text-[9px] font-mono text-text-dim px-0.5">
+              <span>1 篇</span>
+              <span>25 篇</span>
+              <span>50 篇</span>
+              <span>75 篇</span>
+              <span>100 篇</span>
+            </div>
+          </div>
+
+          <!-- Param 4: Question Types (Compact 3-Pills Row) -->
+          <div class="flex flex-col gap-1.5 pt-2 border-t border-border-glass-hairline/40">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-semibold text-primary">題型架構</label>
+              <span class="px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-primary/10 text-primary border border-border-glass-hairline" id="selected-types-count">3 Selected</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1" id="type-checkboxes-container">
+              <label class="type-check-label flex flex-col items-center justify-center p-1.5 rounded-lg bg-white/20 border border-white text-primary cursor-pointer transition-all shadow-sm text-center" data-type="article">
+                <input type="checkbox" class="sr-only type-checkbox" value="article" checked>
+                <span class="material-symbols-outlined text-[15px]">menu_book</span>
+                <span class="text-[10px] font-semibold mt-0.5">文章填空</span>
+              </label>
+              <label class="type-check-label flex flex-col items-center justify-center p-1.5 rounded-lg bg-white/20 border border-white text-primary cursor-pointer transition-all shadow-sm text-center" data-type="sentence">
+                <input type="checkbox" class="sr-only type-checkbox" value="sentence" checked>
+                <span class="material-symbols-outlined text-[15px]">rule</span>
+                <span class="text-[10px] font-semibold mt-0.5">句子選擇</span>
+              </label>
+              <label class="type-check-label flex flex-col items-center justify-center p-1.5 rounded-lg bg-white/20 border border-white text-primary cursor-pointer transition-all shadow-sm text-center" data-type="spelling">
+                <input type="checkbox" class="sr-only type-checkbox" value="spelling" checked>
+                <span class="material-symbols-outlined text-[15px]">spellcheck</span>
+                <span class="text-[10px] font-semibold mt-0.5">造句手寫</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Param 5: Adaptive Weakness Toggle (Ultra-Compact) -->
+          <div class="flex items-center justify-between p-2 rounded-lg bg-surface-glass-medium border border-border-glass-hairline">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-feedback-success text-[16px]">psychology</span>
+              <span class="text-[11px] font-semibold text-primary">歷史錯題強化</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input checked="" class="sr-only peer" id="adaptive-toggle" type="checkbox"/>
+              <div class="w-8 h-4 bg-surface-glass-elevated border border-border-glass-active peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary/40 peer-checked:border-white"></div>
+            </label>
+          </div>
+
+          <!-- PRIMARY SYNTHESIZE ACTION BUTTON -->
+          <div class="pt-1">
+            <button class="w-full py-2.5 px-3 rounded-full text-xs md:text-sm font-bold text-black bg-white hover:bg-neutral-200 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_28px_rgba(255,255,255,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-1.5 group cursor-pointer" id="btn-synthesize" type="button">
+              <span class="material-symbols-outlined text-[17px] group-hover:rotate-12 transition-transform text-amber-500">bolt</span>
+              <span>生成交互式題組</span>
+              <span class="material-symbols-outlined text-[15px] opacity-70 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </button>
+            <div class="text-center text-[9px] text-text-dim mt-1.5 font-mono">
+              GSAT &amp; CEFR Standard
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN STAGE: Word Bank Management & Ingestion (col-span-8, Independent Scrollable) -->
+      <section class="lg:col-span-8 h-full overflow-y-auto pr-1 pb-16 flex flex-col gap-4">
+
+        <!-- Stage Card 1: Raw Text Ingestion & Parser (Compact Height) -->
+        <div class="rounded-xl bg-surface-glass-subtle backdrop-blur-xl border border-border-glass-hairline p-3.5 md:p-4 flex flex-col gap-2.5 shadow-xl">
+          <div class="flex items-center justify-between border-b border-border-glass-hairline/60 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-feedback-success text-[18px]">filter_center_focus</span>
+              <h2 class="text-sm font-bold text-primary">智慧文字擷取與單字匯入</h2>
+            </div>
+            <span class="text-[10px] font-mono text-text-dim bg-black/50 px-2 py-0.5 rounded border border-white/10">
+              Regex + Filter Parser
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <div class="relative">
+              <textarea class="w-full bg-black/40 backdrop-blur-xl border border-border-glass-hairline rounded-lg p-2.5 text-xs text-primary placeholder:text-text-dim/60 focus:outline-none focus:border-white/50 focus:shadow-[0_0_16px_rgba(255,255,255,0.12)] transition-all resize-y leading-relaxed" id="raw-input-textarea" placeholder="在此貼上文章、句子或單字清單，點擊下方「自動偵測並加入單字庫」..." rows="2"></textarea>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <button class="px-4 py-1.5 rounded-full text-xs font-semibold text-black bg-white hover:bg-neutral-200 hover:shadow-[0_0_16px_rgba(255,255,255,0.25)] transition-all flex items-center justify-center gap-1.5 cursor-pointer" id="btn-detect" type="button">
+              <span class="material-symbols-outlined text-[15px]">auto_awesome</span>
+              <span>自動偵測並加入單字庫 (Auto-Ingest)</span>
+            </button>
+            <div id="terms-badge-container" class="hidden flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-glass-medium border border-border-glass-hairline self-start sm:self-auto transition-all">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping" id="terms-badge-dot"></span>
+              <span class="text-[11px] text-on-surface-variant font-medium" id="terms-badge-text">No new unique terms found</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage Card 2: Active Word Bank & Chips Tray (Compact Height) -->
+        <div class="rounded-xl bg-surface-glass-subtle backdrop-blur-xl border border-border-glass-hairline p-3.5 md:p-4 flex flex-col gap-2.5 shadow-xl relative overflow-hidden">
+          
+          <!-- Bank Tabs & Quick Actions -->
+          <div class="flex flex-col gap-2 pb-2 border-b border-border-glass-hairline/60">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-feedback-success text-[18px]">layers</span>
+                <h2 class="text-sm font-bold text-primary">單字庫管理</h2>
+                <span class="px-2 py-0.2 rounded-full text-[11px] bg-surface-glass-medium text-text-dim border border-border-glass-hairline" id="bank-count-badge">
+                  0 Items
+                </span>
+              </div>
+              <div class="flex items-center gap-1 flex-wrap">
+                <button class="px-2.5 py-0.5 rounded-full text-xs font-medium text-primary bg-surface-glass-medium border border-border-glass-hairline hover:bg-white hover:text-black transition-all" id="btn-select-all" type="button">
+                  全選
+                </button>
+                <button class="px-2.5 py-0.5 rounded-full text-xs font-medium text-on-surface-variant bg-surface-glass-subtle border border-border-glass-hairline hover:text-primary transition-all" id="btn-deselect-all" type="button">
+                  取消全選
+                </button>
+                <button class="px-2.5 py-0.5 rounded-full text-xs font-medium text-feedback-error bg-feedback-error-glass/30 border border-feedback-error/30 hover:bg-feedback-error-glass transition-all" id="btn-clear-bank" type="button">
+                  清空字庫
+                </button>
+              </div>
+            </div>
+
+            <!-- Multi-Bank Switcher Row -->
+            <div class="flex items-center justify-between flex-wrap gap-1.5 pt-0.5">
+              <div class="flex items-center gap-1 flex-wrap" id="bank-tabs-container">
+                <!-- Dynamically rendered bank tabs -->
+              </div>
+              <div class="flex items-center gap-1">
+                <button type="button" id="btn-add-bank" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-primary border border-white/20 transition-all flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px]">add</span>
+                  <span>新增單字庫</span>
+                </button>
+                <button type="button" id="btn-rename-bank" class="p-1 rounded-full bg-surface-glass-subtle hover:bg-surface-glass-medium text-on-surface-variant hover:text-primary border border-border-glass-hairline transition-all flex items-center justify-center" title="重新命名目前單字庫">
+                  <span class="material-symbols-outlined text-[13px]">edit</span>
+                </button>
+                <button type="button" id="btn-delete-bank" class="p-1 rounded-full bg-feedback-error-glass/30 hover:bg-feedback-error-glass text-feedback-error border border-feedback-error/30 transition-all flex items-center justify-center" title="刪除目前單字庫">
+                  <span class="material-symbols-outlined text-[13px]">delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Word Chips Grid Area -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between text-[11px] text-text-dim">
+              <span>點擊單字切換選取，選取項目將用於本次出題</span>
+              <span>點擊 × 移除</span>
+            </div>
+            <div class="flex flex-wrap gap-2 min-h-[90px] max-h-[220px] overflow-y-auto items-start p-2.5 rounded-lg bg-black/40 border border-border-glass-hairline/40 backdrop-blur-md" id="chips-container">
+              <!-- Dynamically populated word chips -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+</main>
+<!-- Script for Micro-Interactions -->
+<script type="module">
+  import { requireAuth, logout, getMyExercises } from "./firebase-config.js";
+  import { generateExercise, buildOptions, getApiKey, setApiKey } from "./gemini.js";
+  import { saveToSession, smartExtractWords, showConfirmModal, showPromptModal } from "./app.js";
+
+  // ── Multi-Bank State Management ──
+  // banks: [ { id: "default", name: "預設字庫", words: [...] }, ... ]
+  let banks = [];
+  try {
+    const savedBanks = localStorage.getItem("vocab_banks");
+    if (savedBanks) {
+      banks = JSON.parse(savedBanks);
+    }
+  } catch (e) {
+    banks = [];
+  }
+
+  // Backward compatibility with legacy "vocab_bank"
+  if (!Array.isArray(banks) || banks.length === 0) {
+    const legacy = JSON.parse(localStorage.getItem("vocab_bank") || "[]");
+    banks = [
+      { id: "default", name: "主要單字庫", words: legacy.length > 0 ? legacy : ["sustainability", "articulate", "paradigm", "comprehensive", "benchmark", "resilient"] },
+      { id: "academic", name: "學術英語", words: ["pragmatic", "ambiguity", "volatile", "fluctuate", "advocate"] }
+    ];
+  }
+
+  let currentBankId = localStorage.getItem("current_bank_id") || banks[0].id;
+  if (!banks.some(b => b.id === currentBankId)) {
+    currentBankId = banks[0].id;
+  }
+
+  function getCurrentBank() {
+    return banks.find(b => b.id === currentBankId) || banks[0];
+  }
+
+  let selectedWords = new Set(getCurrentBank().words);
+
+  let currentLang = "en";
+  let currentWordsPerArticle = 3;
+  let currentNumArticles = 2;
+
+  requireAuth((user) => {
+    const nameEl = document.getElementById("nav-user-name");
+    const initialEl = document.getElementById("nav-user-initial");
+    if (nameEl) nameEl.textContent = user.displayName || user.email.split('@')[0];
+    if (initialEl) initialEl.textContent = (user.displayName || user.email)[0].toUpperCase();
+  });
+
+  document.getElementById("logout-btn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    logout().then(() => window.location.href = "index.html");
+  });
+
+  const toast = document.getElementById('toast-banner');
+  const toastText = document.getElementById('toast-text');
+  function showToast(msg) {
+    if (!toast) return;
+    toastText.textContent = msg;
+    toast.classList.remove('hidden');
+    toast.classList.add('flex');
+    setTimeout(() => {
+      toast.classList.add('hidden');
+      toast.classList.remove('flex');
+    }, 2800);
+  }
+
+  const container = document.getElementById('chips-container');
+  const counterEl = document.getElementById('selected-counter');
+  const bankCountBadge = document.getElementById('bank-count-badge');
+  const btnSelectAll = document.getElementById('btn-select-all');
+  const btnDeselectAll = document.getElementById('btn-deselect-all');
+  const btnClearBank = document.getElementById('btn-clear-bank');
+  const btnDetect = document.getElementById('btn-detect');
+  const rawInputTextarea = document.getElementById('raw-input-textarea');
+  const btnSynthesize = document.getElementById('btn-synthesize');
+  const adaptiveToggle = document.getElementById('adaptive-toggle');
+  const bankTabsContainer = document.getElementById('bank-tabs-container');
+  const btnAddBank = document.getElementById('btn-add-bank');
+  const btnRenameBank = document.getElementById('btn-rename-bank');
+  const btnDeleteBank = document.getElementById('btn-delete-bank');
+  const termsBadgeContainer = document.getElementById('terms-badge-container');
+  const termsBadgeText = document.getElementById('terms-badge-text');
+  const termsBadgeDot = document.getElementById('terms-badge-dot');
+
+  function saveBanks() {
+    localStorage.setItem("vocab_banks", JSON.stringify(banks));
+    localStorage.setItem("current_bank_id", currentBankId);
+    // sync active words to legacy key for global compatibility
+    localStorage.setItem("vocab_bank", JSON.stringify(getCurrentBank().words));
+  }
+
+  function renderBankTabs() {
+    if (!bankTabsContainer) return;
+    bankTabsContainer.innerHTML = '';
+    banks.forEach(b => {
+      const isCurrent = b.id === currentBankId;
+      const tabBtn = document.createElement('button');
+      tabBtn.type = 'button';
+      tabBtn.className = isCurrent
+        ? 'px-3 py-1 rounded-full text-xs font-semibold bg-white text-black shadow-[0_0_12px_rgba(255,255,255,0.4)] transition-all'
+        : 'px-3 py-1 rounded-full text-xs font-medium bg-surface-glass-medium text-on-surface-variant hover:text-primary hover:bg-surface-glass-elevated border border-border-glass-hairline transition-all';
+      tabBtn.innerHTML = `<span>${b.name}</span> <span class="opacity-60 text-[10px]">(${b.words.length})</span>`;
+      tabBtn.addEventListener('click', () => {
+        if (currentBankId !== b.id) {
+          currentBankId = b.id;
+          selectedWords = new Set(getCurrentBank().words);
+          saveBanks();
+          renderBankTabs();
+          renderChips();
+          updateTermsBadge();
+          showToast(`已切換至「${b.name}」`);
+        }
+      });
+      bankTabsContainer.appendChild(tabBtn);
+    });
+  }
+
+  function renderChips() {
+    container.innerHTML = '';
+    const activeBank = getCurrentBank();
+    const words = activeBank.words || [];
+
+    if (words.length === 0) {
+      container.innerHTML = '<div class="text-text-dim text-caption py-3 px-2">此單字庫目前是空的。可從下方貼上文字偵測加入，或從其他文章匯入。</div>';
+      counterEl.textContent = '0';
+      bankCountBadge.textContent = '0 Items';
+      return;
+    }
+
+    words.forEach(word => {
+      const isSelected = selectedWords.has(word);
+      const div = document.createElement('div');
+      div.setAttribute('data-word', word);
+      div.className = isSelected
+        ? 'chip active group flex items-center gap-1.5 px-4 py-2 rounded-full cursor-pointer bg-white/20 border border-white text-primary shadow-[0_0_16px_rgba(255,255,255,0.22)] transition-all'
+        : 'chip group flex items-center gap-1.5 px-4 py-2 rounded-full cursor-pointer bg-surface-glass-medium border border-border-glass-hairline text-on-surface-variant transition-all';
+      div.innerHTML = `
+        <span class="font-label-md text-label-md ${isSelected ? 'font-semibold' : 'font-normal'} tracking-tight">${word}</span>
+        <button type="button" class="chip-remove text-primary/60 hover:text-primary p-0.5 leading-none transition-colors" title="Remove item">
+          <span class="material-symbols-outlined text-[15px]">close</span>
+        </button>
+      `;
+      container.appendChild(div);
+    });
+
+    counterEl.textContent = selectedWords.size;
+    bankCountBadge.textContent = words.length + ' Items';
+  }
+
+  // Tab management events
+  btnAddBank?.addEventListener('click', async () => {
+    const name = await showPromptModal({
+      title: '建立新單字庫',
+      message: '請輸入新的單字庫名稱（例如：多益核心、托福高頻、期末考試）：',
+      placeholder: '例如：托福高頻字彙',
+      confirmText: '建立',
+      cancelText: '取消'
+    });
+    if (name) {
+      const newId = 'bank_' + Date.now();
+      banks.push({ id: newId, name: name, words: [] });
+      currentBankId = newId;
+      selectedWords = new Set();
+      // 清空原始文字輸入框與偵測標籤，確保全新單字庫完全乾淨
+      if (rawInputTextarea) rawInputTextarea.value = '';
+      updateTermsBadge();
+      saveBanks();
+      renderBankTabs();
+      renderChips();
+      showToast(`已建立並切換至「${name}」`);
+    }
+  });
+
+  btnRenameBank?.addEventListener('click', async () => {
+    const active = getCurrentBank();
+    const newName = await showPromptModal({
+      title: '重新命名單字庫',
+      message: `請為「${active.name}」輸入新名稱：`,
+      defaultValue: active.name,
+      confirmText: '儲存',
+      cancelText: '取消'
+    });
+    if (newName && newName !== active.name) {
+      active.name = newName;
+      saveBanks();
+      renderBankTabs();
+      showToast(`單字庫名稱已更新為「${newName}」`);
+    }
+  });
+
+  btnDeleteBank?.addEventListener('click', async () => {
+    if (banks.length <= 1) {
+      showToast('至少需保留一個單字庫，無法刪除唯一的字庫！');
+      return;
+    }
+    const active = getCurrentBank();
+    const ok = await showConfirmModal({
+      title: '刪除單字庫',
+      message: `確定要刪除「${active.name}」（內含 ${active.words.length} 個單字）嗎？此動作無法復原。`,
+      confirmText: '確定刪除',
+      cancelText: '取消',
+      isDanger: true
+    });
+    if (ok) {
+      banks = banks.filter(b => b.id !== active.id);
+      currentBankId = banks[0].id;
+      selectedWords = new Set(getCurrentBank().words);
+      saveBanks();
+      renderBankTabs();
+      renderChips();
+      showToast(`已刪除「${active.name}」`);
+    }
+  });
+
+  container.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.chip-remove');
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    const word = chip.getAttribute('data-word');
+    const activeBank = getCurrentBank();
+
+    if (removeBtn) {
+      e.stopPropagation();
+      activeBank.words = activeBank.words.filter(w => w !== word);
+      selectedWords.delete(word);
+      saveBanks();
+      renderBankTabs();
+      renderChips();
+      showToast(`已從「${activeBank.name}」移除 "${word}"`);
+      return;
+    }
+
+    if (selectedWords.has(word)) {
+      selectedWords.delete(word);
+    } else {
+      selectedWords.add(word);
+    }
+    renderChips();
+  });
+
+  btnSelectAll?.addEventListener('click', () => {
+    selectedWords = new Set(getCurrentBank().words);
+    renderChips();
+    showToast('已全選目前單字庫的所有單字');
+  });
+
+  btnDeselectAll?.addEventListener('click', () => {
+    selectedWords.clear();
+    renderChips();
+    showToast('已取消全選');
+  });
+
+  btnClearBank?.addEventListener('click', async () => {
+    const active = getCurrentBank();
+    const ok = await showConfirmModal({
+      title: `清空「${active.name}」`,
+      message: `確定要清空「${active.name}」中的所有單字嗎？此動作無法復原。`,
+      confirmText: '確定清空',
+      cancelText: '取消',
+      isDanger: true
+    });
+    if (ok) {
+      active.words = [];
+      selectedWords.clear();
+      saveBanks();
+      renderBankTabs();
+      renderChips();
+      showToast(`已清空「${active.name}」單字庫`);
+    }
+  });
+
+  // ── Dynamic Unique Terms Badge Binding & Pluralization ──
+  function updateTermsBadge() {
+    if (!termsBadgeContainer || !termsBadgeText || !rawInputTextarea) return;
+    const rawText = rawInputTextarea.value.trim();
+    if (!rawText) {
+      termsBadgeContainer.classList.add('hidden');
+      return;
+    }
+
+    const extracted = smartExtractWords(rawText);
+    const activeBank = getCurrentBank();
+    const existingSet = new Set(activeBank.words || []);
+    
+    // Filter for truly new, unique terms that aren't already in the active bank
+    const uniqueNewTerms = extracted.filter(w => !existingSet.has(w));
+    const count = uniqueNewTerms.length;
+
+    termsBadgeContainer.classList.remove('hidden');
+
+    if (count === 0) {
+      termsBadgeText.textContent = 'No new unique terms found';
+      if (termsBadgeDot) {
+        termsBadgeDot.className = 'w-2 h-2 rounded-full bg-text-dim';
+      }
+    } else if (count === 1) {
+      termsBadgeText.textContent = 'Found 1 new unique term';
+      if (termsBadgeDot) {
+        termsBadgeDot.className = 'w-2 h-2 rounded-full bg-primary animate-ping';
+      }
+    } else {
+      termsBadgeText.textContent = `Found ${count} new unique terms`;
+      if (termsBadgeDot) {
+        termsBadgeDot.className = 'w-2 h-2 rounded-full bg-primary animate-ping';
+      }
+    }
+  }
+
+  rawInputTextarea?.addEventListener('input', updateTermsBadge);
+  rawInputTextarea?.addEventListener('change', updateTermsBadge);
+
+  btnDetect?.addEventListener('click', () => {
+    const rawText = rawInputTextarea.value.trim();
+    if (!rawText) {
+      showToast('請先在上方輸入框中貼上文章或單字內容');
+      return;
+    }
+    const extracted = smartExtractWords(rawText);
+    if (extracted.length === 0) {
+      showToast('未偵測到有效單字，請檢查語言設定。');
+      return;
+    }
+    const activeBank = getCurrentBank();
+    let addedCount = 0;
+    extracted.forEach(w => {
+      if (!activeBank.words.includes(w)) {
+        activeBank.words.push(w);
+        selectedWords.add(w);
+        addedCount++;
+      }
+    });
+    saveBanks();
+    renderBankTabs();
+    renderChips();
+    rawInputTextarea.value = '';
+    updateTermsBadge();
+    showToast(`成功加入 ${addedCount} 個單字至「${activeBank.name}」！`);
+  });
+
+  function setupPills(containerSelector, onSelect) {
+    const btns = document.querySelectorAll(containerSelector);
+    btns.forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => {
+          b.classList.remove('active', 'bg-white', 'text-canvas-black', 'shadow-[0_0_12px_rgba(255,255,255,0.3)]', 'font-semibold');
+          b.classList.add('text-on-surface-variant', 'font-normal');
+        });
+        btn.classList.add('active', 'bg-white', 'text-canvas-black', 'shadow-[0_0_12px_rgba(255,255,255,0.3)]', 'font-semibold');
+        btn.classList.remove('text-on-surface-variant', 'font-normal');
+        onSelect(btn, idx);
+      });
+    });
+  }
+
+  setupPills('.lang-pill', (btn, idx) => {
+    currentLang = idx === 0 ? 'en' : 'zh';
+    showToast(`Language: ${idx === 0 ? 'English' : 'Traditional Chinese'}`);
+  });
+
+  // ── Range Sliders (1 ~ 100) ──
+  const sliderWords = document.getElementById('slider-words');
+  const sliderWordsVal = document.getElementById('slider-words-val');
+  if (sliderWords) {
+    sliderWords.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10) || 1;
+      currentWordsPerArticle = val;
+      if (sliderWordsVal) sliderWordsVal.textContent = val;
+    });
+    sliderWords.addEventListener('change', (e) => {
+      showToast(`每篇字數設定為：${e.target.value} 字`);
+    });
+  }
+
+  const sliderArticles = document.getElementById('slider-articles');
+  const sliderArticlesVal = document.getElementById('slider-articles-val');
+  if (sliderArticles) {
+    sliderArticles.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10) || 1;
+      currentNumArticles = val;
+      if (sliderArticlesVal) sliderArticlesVal.textContent = `${val} 篇`;
+    });
+    sliderArticles.addEventListener('change', (e) => {
+      showToast(`篇數設定為：${e.target.value} 篇`);
+    });
+  }
+
+  // ── Question Types Selection Logic ──
+  let selectedTypes = new Set(['article', 'sentence', 'spelling']);
+  const typeLabels = document.querySelectorAll('.type-check-label');
+  const selectedTypesBadge = document.getElementById('selected-types-count');
+
+  function updateTypeSelectionUI() {
+    typeLabels.forEach(label => {
+      const type = label.getAttribute('data-type');
+      const input = label.querySelector('input');
+      const isChecked = selectedTypes.has(type);
+      input.checked = isChecked;
+
+      if (isChecked) {
+        label.className = "type-check-label flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 border border-white text-primary cursor-pointer transition-all shadow-[0_0_12px_rgba(255,255,255,0.15)]";
+      } else {
+        label.className = "type-check-label flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-glass-subtle border border-border-glass-hairline text-on-surface-variant hover:text-primary transition-all";
+      }
+    });
+
+    if (selectedTypesBadge) {
+      selectedTypesBadge.textContent = `${selectedTypes.size} Selected`;
+    }
+
+    if (btnSynthesize) {
+      if (selectedTypes.size === 0) {
+        btnSynthesize.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        btnSynthesize.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+  }
+
+  typeLabels.forEach(label => {
+    label.addEventListener('click', (e) => {
+      e.preventDefault();
+      const type = label.getAttribute('data-type');
+      if (selectedTypes.has(type)) {
+        if (selectedTypes.size <= 1) {
+          showToast('請至少選擇一種題型！', 'warning');
+          return;
+        }
+        selectedTypes.delete(type);
+      } else {
+        selectedTypes.add(type);
+      }
+      updateTypeSelectionUI();
+    });
+  });
+
+  renderBankTabs();
+  renderChips();
+  updateTermsBadge();
+  updateTypeSelectionUI();
+
+  // ── 支援從 History 頁面傳入的弱點單字 (prefillWords) 與自動出題 (autoGenerate) ──
+  try {
+    const prefillRaw = sessionStorage.getItem("prefillWords");
+    if (prefillRaw) {
+      sessionStorage.removeItem("prefillWords");
+      const prefillWords = JSON.parse(prefillRaw);
+      if (Array.isArray(prefillWords) && prefillWords.length > 0) {
+        const activeBank = getCurrentBank();
+        prefillWords.forEach(w => {
+          const cleanW = String(w).trim().toLowerCase();
+          if (cleanW && !activeBank.words.includes(cleanW)) {
+            activeBank.words.push(cleanW);
+          }
+        });
+        // 專門勾選傳入的弱點錯字
+        selectedWords = new Set(prefillWords.map(w => String(w).trim().toLowerCase()));
+        saveBanks();
+        renderBankTabs();
+        renderChips();
+        showToast(`已自動載入並選取 ${selectedWords.size} 個常錯單字！`);
+
+        const autoGen = sessionStorage.getItem("autoGenerate");
+        if (autoGen === "true") {
+          sessionStorage.removeItem("autoGenerate");
+          setTimeout(() => {
+            btnSynthesize?.click();
+          }, 350);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Error processing prefillWords:", err);
+  }
+
+  // ── Gemini API Key Configuration ──
+  const btnApiKeyConfig = document.getElementById("btn-api-key-config");
+  const apiKeyStatusText = document.getElementById("api-key-status-text");
+
+  function updateApiKeyStatusUI() {
+    const key = getApiKey();
+    if (apiKeyStatusText) {
+      if (key) {
+        apiKeyStatusText.textContent = "已設定 Key";
+        btnApiKeyConfig?.classList.add("bg-feedback-success-glass", "text-feedback-success", "border-feedback-success/40");
+        btnApiKeyConfig?.classList.remove("bg-white/10", "text-primary", "border-white/20");
+      } else {
+        apiKeyStatusText.textContent = "未設定 Key";
+        btnApiKeyConfig?.classList.remove("bg-feedback-success-glass", "text-feedback-success", "border-feedback-success/40");
+        btnApiKeyConfig?.classList.add("bg-white/10", "text-primary", "border-white/20");
+      }
+    }
+  }
+
+  async function promptForApiKey(isReconfigure = false) {
+    const current = getApiKey();
+    const result = await showPromptModal({
+      title: isReconfigure ? "設定 Google Gemini API Key" : "尚未設定 Gemini API Key",
+      message: "本系統使用您的專屬 API Key 進行出題（金鑰僅保存在本機瀏覽器，安全不外洩）。可至 Google AI Studio 免費取得。",
+      placeholder: "請貼上 AIzaSy... 開頭的金鑰",
+      defaultValue: current,
+      confirmText: "儲存金鑰",
+      cancelText: "取消"
+    });
+
+    if (result && result.trim()) {
+      setApiKey(result.trim());
+      updateApiKeyStatusUI();
+      showToast("API Key 已成功儲存！");
+      return true;
+    }
+    return false;
+  }
+
+  btnApiKeyConfig?.addEventListener("click", () => promptForApiKey(true));
+  updateApiKeyStatusUI();
+
+  btnSynthesize?.addEventListener('click', async () => {
+    if (selectedTypes.size === 0) {
+      showToast('請至少選擇一種題型！', 'warning');
+      return;
+    }
+
+    if (selectedWords.size === 0) {
+      showToast('請在單字庫中勾選至少 1 個單字！', 'warning');
+      return;
+    }
+
+    // 檢查是否已設定 API Key，若未設定則主動彈窗提示輸入
+    if (!getApiKey()) {
+      const saved = await promptForApiKey(false);
+      if (!saved) {
+        showToast('需要 Gemini API Key 才能開始出題！', 'warning');
+        return;
+      }
+    }
+
+    let wordsToUse = Array.from(selectedWords);
+    if (currentNumArticles) {
+      const needed = currentNumArticles * currentWordsPerArticle;
+      if (wordsToUse.length > needed) {
+        wordsToUse = wordsToUse.slice(0, needed);
+      }
+    } else {
+      if (wordsToUse.length > 20) {
+        wordsToUse = wordsToUse.slice(0, 20);
+      }
+    }
+
+    const useHistory = adaptiveToggle ? adaptiveToggle.checked : true;
+    btnSynthesize.disabled = true;
+    btnSynthesize.innerHTML = `
+      <span class="material-symbols-outlined text-[22px] animate-spin">progress_activity</span>
+      <span>Synthesizing Adaptive Exercises (AI Working)...</span>
+    `;
+    showToast('Synthesizing reading passages & clozes with Gemini AI...');
+
+    try {
+      let historySummary = null;
+      if (useHistory) {
+        try {
+          const pastList = await getMyExercises();
+          if (pastList && pastList.length > 0) {
+            const recent = pastList.slice(0, 5);
+            const weakWords = new Set();
+            recent.forEach(r => {
+              if (r.incorrectWords && Array.isArray(r.incorrectWords)) {
+                r.incorrectWords.forEach(w => weakWords.add(w));
+              }
+            });
+            historySummary = `The student has completed ${pastList.length} past exercises. ` +
+              (weakWords.size > 0 ? `Historically missed/weak words include: ${Array.from(weakWords).join(", ")}. ` : "") +
+              `Average recent score: ${Math.round(recent.reduce((acc, cur) => acc + (cur.score ? cur.score.pct : 80), 0) / recent.length)}%.`;
+          }
+        } catch (histErr) {
+          console.warn("Could not load past history for context:", histErr);
+        }
+      }
+
+      let exerciseData = await generateExercise(wordsToUse, currentLang, 'middle', {
+        wordsPerArticle: currentWordsPerArticle,
+        numArticles: currentNumArticles,
+        historySummary,
+        selectedTypes: Array.from(selectedTypes)
+      });
+
+      exerciseData = buildOptions(exerciseData);
+      saveToSession('currentExercise', exerciseData);
+      window.location.href = 'practice.html';
+    } catch (err) {
+      console.error(err);
+      if (err.message === "MISSING_API_KEY") {
+        await promptForApiKey(false);
+      } else {
+        showToast('出題失敗: ' + err.message);
+      }
+      btnSynthesize.disabled = false;
+      btnSynthesize.innerHTML = `
+        <span class="material-symbols-outlined text-[22px]">bolt</span>
+        <span>生成交互式題組</span>
+        <span class="material-symbols-outlined text-[18px] opacity-70">arrow_forward</span>
+      `;
+    }
+  });
+</script>
+</body></html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>VocabFill — Precision Language Mastery</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error-container": "#ffdad6", "inverse-on-surface": "#303030", "inverse-surface": "#e2e2e2", "secondary-container": "#484949", "canvas-black": "#000000", "secondary-fixed": "#e3e2e2", "error-container": "#93000a", "on-tertiary": "#003824", "inverse-primary": "#5d5f5f", "outline-variant": "#444748", "surface-glass-elevated": "rgba(255, 255, 255, 0.15)", "surface-container-low": "#1b1b1b", "border-glass-hairline": "rgba(255, 255, 255, 0.15)", "border-glass-active": "rgba(255, 255, 255, 0.3)", "on-primary-container": "#636565", "primary-fixed": "#e2e2e2", "on-background": "#e2e2e2", "surface": "#131313", "text-dim": "#737373", "on-surface": "#e2e2e2", "on-tertiary-fixed": "#002113", "surface-container-high": "#2a2a2a", "surface-container-lowest": "#0e0e0e", "surface-container-highest": "#353535", "on-primary": "#2f3131", "surface-glass-medium": "rgba(255, 255, 255, 0.08)", "outline": "#8e9192", "feedback-error-glass": "rgba(239, 68, 68, 0.2)", "on-error": "#690005", "feedback-error": "#ef4444", "error": "#ffb4ab", "on-tertiary-container": "#00734e", "on-surface-variant": "#c4c7c8", "on-secondary-fixed": "#1a1c1c", "surface-tint": "#c6c6c7", "tertiary-container": "#6ffbbe", "primary-container": "#e2e2e2", "feedback-success": "#10b981", "on-secondary-fixed-variant": "#464747", "tertiary-fixed-dim": "#4edea3", "on-secondary": "#2f3131", "secondary": "#c7c6c6", "feedback-success-glass": "rgba(16, 185, 129, 0.18)", "on-primary-fixed-variant": "#454747", "surface-dim": "#131313", "surface-glass-subtle": "rgba(255, 255, 255, 0.04)", "on-tertiary-fixed-variant": "#005236", "primary": "#ffffff", "surface-variant": "#353535", "border-glass-focus": "rgba(255, 255, 255, 0.5)", "on-primary-fixed": "#1a1c1c", "tertiary-fixed": "#6ffbbe", "secondary-fixed-dim": "#c7c6c6", "primary-fixed-dim": "#c6c6c7", "background": "#131313", "tertiary": "#ffffff", "on-secondary-container": "#b8b8b8", "surface-container": "#1f1f1f", "surface-bright": "#393939" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "margin": "1rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "margin-desktop": "2rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "gutter": "1rem", "space-xl": "2.5rem", "space-sm": "0.5rem" }, "fontFamily": { "body-default": [ "Geist" ], "caption": [ "Geist" ], "label-md": [ "Geist" ], "body-reading-mobile": [ "Geist" ], "body-reading": [ "Geist" ], "headline-sm": [ "Geist" ], "label-sm": [ "Geist" ], "headline-lg": [ "Geist" ], "interactive-blank": [ "Geist" ], "headline-xl-mobile": [ "Geist" ], "headline-xl": [ "Geist" ] }, "fontSize": { "body-default": [ "0.9375rem", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" } ], "caption": [ "0.75rem", { "lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500" } ], "label-md": [ "0.875rem", { "lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500" } ], "body-reading-mobile": [ "1rem", { "lineHeight": "2.0", "letterSpacing": "0.01em", "fontWeight": "400" } ], "body-reading": [ "1.0625rem", { "lineHeight": "2.2", "letterSpacing": "0.01em", "fontWeight": "400" } ], "headline-sm": [ "1.15rem", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "label-sm": [ "0.8125rem", { "lineHeight": "1.3", "letterSpacing": "0.03em", "fontWeight": "500" } ], "headline-lg": [ "1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "interactive-blank": [ "1rem", { "lineHeight": "1.5", "letterSpacing": "0.05em", "fontWeight": "600" } ], "headline-xl-mobile": [ "1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.03em", "fontWeight": "800" } ], "headline-xl": [ "2.4rem", { "lineHeight": "1.2", "letterSpacing": "-0.04em", "fontWeight": "800" } ] } } } };</script></head><body class="bg-canvas-black font-body-default text-body-default text-on-surface antialiased min-h-screen selection:bg-surface-glass-elevated selection:text-primary"><header class="fixed top-0 inset-x-0 z-50 bg-black/60 backdrop-blur-2xl"><div class="h-20 max-w-[1000px] mx-auto px-margin md:px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group" data-path="generator" href="#"><div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-95"><span class="material-symbols-outlined text-on-primary text-[15px]">edit_square</span></div><span class="font-headline-sm text-headline-sm text-primary tracking-tight">VocabFill</span></a><nav class="hidden md:flex items-center gap-space-xs p-1 bg-surface-glass-subtle rounded-full backdrop-blur-md" data-active-classes="bg-surface-glass-medium text-primary shadow-[0_0_16px_rgba(255,255,255,0.08)]"><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-glass-medium transition-all" data-path="generator" href="#">Generator</a><a aria-current="page" class="px-space-md py-1.5 rounded-full font-label-md transition-all bg-surface-glass-medium text-primary shadow-[0_0_16px_rgba(255,255,255,0.08)]" data-path="practice" href="#">Practice</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-glass-medium transition-all" data-path="history" href="#">History</a></nav></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm pl-space-sm pr-space-md py-1 rounded-full bg-surface-glass-subtle backdrop-blur-md"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden sm:flex flex-col text-left"><span class="font-label-sm text-label-sm text-primary leading-none">Alex Lin</span><span class="font-caption text-caption text-text-dim leading-none mt-0.5">AL</span></div></div><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-glass-medium bg-surface-glass-subtle backdrop-blur-md transition-all" data-path="login" href="#">Sign Out</a></div></div></header><main class="w-full pt-20 bg-canvas-black min-h-screen"><div class="max-w-[1000px] mx-auto px-margin md:px-margin-desktop py-space-lg"><div class="flex flex-col w-full gap-y-space-lg text-on-surface">
+<!-- Breadcrumb / Overline Meta Navigation -->
+<div class="flex items-center justify-between text-caption font-caption tracking-wider uppercase text-text-dim">
+<div class="flex items-center gap-space-sm">
+<span class="text-on-surface-variant font-label-sm">Evaluation Engine</span>
+<span class="w-1 h-1 rounded-full bg-text-dim"></span>
+<span>Session #VF-8842</span>
+<span class="w-1 h-1 rounded-full bg-text-dim"></span>
+<span class="text-feedback-success font-semibold">Verified</span>
+</div>
+<div class="flex items-center gap-space-xs text-text-dim">
+<span class="material-symbols-outlined text-[15px]">timer</span>
+<span>Duration: 04m 18s</span>
+</div>
+</div>
+<!-- SECTION 1: Performance & Cloud Sync Summary Card -->
+<section class="relative overflow-hidden rounded-lg bg-surface-glass-subtle backdrop-blur-2xl p-space-md sm:p-space-lg shadow-xl" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 20px 40px -15px rgba(0, 0, 0, 0.7);">
+<!-- Subtle Ambient Corner Flare -->
+<div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-feedback-success-glass blur-3xl opacity-30"></div>
+<!-- Header Row -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-md" style="box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.08);">
+<div class="flex items-center gap-space-sm">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#ffffff]"></div>
+<h2 class="font-label-md text-label-md text-primary tracking-widest uppercase font-semibold">
+          Exercise Evaluation Summary
+        </h2>
+</div>
+<!-- Cloud Sync Pill -->
+<div class="inline-flex items-center gap-space-sm px-space-md py-1 rounded-full bg-surface-glass-medium" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-feedback-success opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-feedback-success"></span>
+</span>
+<span class="font-caption text-caption text-on-surface-variant tracking-normal">
+          Synced to Firestore Cloud Storage
+        </span>
+<span class="material-symbols-outlined text-[14px] text-text-dim">cloud_done</span>
+</div>
+</div>
+<!-- Metrics Bento Split -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md pt-space-md">
+<!-- Primary Score Callout -->
+<div class="md:col-span-5 flex flex-col justify-between p-space-md rounded-DEFAULT bg-surface-glass-subtle" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption uppercase tracking-wider text-text-dim">Composite Score</span>
+<span class="px-2 py-0.5 rounded-full bg-feedback-success-glass text-feedback-success font-caption text-caption font-semibold">
+            Top 5% Tier
+          </span>
+</div>
+<div class="my-space-sm flex items-baseline gap-space-sm">
+<span class="font-headline-xl text-headline-xl text-primary font-extrabold tracking-tighter">9 / 10</span>
+<span class="font-headline-sm text-headline-sm text-feedback-success font-semibold tracking-tight">90% Precision</span>
+</div>
+<!-- Progress Gauge -->
+<div class="w-full">
+<div class="flex items-center justify-between text-caption font-caption text-text-dim mb-1">
+<span>Accuracy Threshold</span>
+<span class="text-primary font-medium">90%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-glass-medium overflow-hidden p-[1px]">
+<div class="h-full rounded-full bg-feedback-success shadow-[0_0_12px_rgba(16,185,129,0.8)] transition-all duration-1000 ease-out" style="width: 90%;"></div>
+</div>
+</div>
+</div>
+<!-- Metadata & Analytical Notes -->
+<div class="md:col-span-7 flex flex-col justify-between p-space-md rounded-DEFAULT bg-surface-glass-subtle gap-space-sm" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);">
+<div>
+<span class="font-caption text-caption uppercase tracking-wider text-text-dim block mb-space-xs">Metadata &amp; Parameters</span>
+<p class="font-body-default text-body-default text-primary flex items-center gap-space-xs flex-wrap">
+<span class="text-on-surface">Completed: Today, 14:32</span>
+<span class="text-text-dim font-bold">/</span>
+<span class="px-2 py-0.5 rounded bg-surface-glass-elevated text-on-surface text-caption font-label-sm">Level: Intermediate (B2)</span>
+<span class="text-text-dim font-bold">/</span>
+<span class="text-on-surface-variant font-caption">Passage &amp; Sentence Mode</span>
+</p>
+</div>
+<!-- Status Message Banner -->
+<div class="p-space-sm rounded-DEFAULT bg-surface-glass-medium flex items-start gap-space-sm" style="box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.25);">
+<span class="material-symbols-outlined text-feedback-success text-[18px] mt-0.5">verified</span>
+<p class="font-label-md text-label-md text-primary leading-snug">
+            Exceptional mastery demonstrated. <span class="text-feedback-error font-medium">1 item</span> identified for spaced repetition review.
+          </p>
+</div>
+<!-- Inline Spark Stats -->
+<div class="grid grid-cols-3 gap-space-sm pt-space-xs text-caption font-caption text-text-dim">
+<div>
+<span class="block text-primary font-label-md font-semibold">0.8s</span>
+<span>Avg Response</span>
+</div>
+<div>
+<span class="block text-feedback-success font-label-md font-semibold">4 / 4</span>
+<span>Target Blanks</span>
+</div>
+<div>
+<span class="block text-primary font-label-md font-semibold">+45 XP</span>
+<span>Lexical Growth</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action Buttons Row -->
+<div class="flex flex-wrap items-center gap-space-sm pt-space-md mt-space-md" style="box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);">
+<button class="px-space-lg py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold transition-all hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(255,255,255,0.4)] flex items-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[17px]">restart_alt</span>
+<span>Practice Another Set</span>
+</button>
+<button class="px-space-lg py-2.5 rounded-full bg-surface-glass-elevated text-primary font-label-md text-label-md font-medium transition-all hover:bg-surface-glass-medium" style="box-shadow: inset 0 0 0 1px #ffffff;" type="button">
+<span class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[17px]">manage_search</span>
+<span>Review Deep Explanations (Current)</span>
+</span>
+</button>
+<button class="px-space-md py-2.5 rounded-full bg-surface-glass-subtle text-on-surface-variant font-label-md text-label-md transition-all hover:text-primary hover:bg-surface-glass-medium" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);" type="button">
+<span class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[17px]">insights</span>
+<span>View Historical Progression</span>
+</span>
+</button>
+</div>
+</section>
+<!-- SECTION 2: Inline Graded Passage Review -->
+<section class="relative rounded-lg bg-surface-glass-subtle backdrop-blur-2xl p-space-md sm:p-space-lg shadow-xl" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);">
+<!-- Title & Legend -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-md mb-space-md" style="box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.08);">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">menu_book</span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-semibold tracking-tight">
+          Passage Review: Modern Architectural Adaptation
+        </h3>
+</div>
+<!-- Micro Legend -->
+<div class="flex items-center gap-space-md text-caption font-caption text-text-dim">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-feedback-success shadow-[0_0_6px_#10b981]"></span>
+<span>Validated Correct</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-feedback-error shadow-[0_0_6px_#ef4444]"></span>
+<span>Syntax Error / Repaired</span>
+</span>
+</div>
+</div>
+<!-- Graded Interactive Passage Body -->
+<div class="rounded-DEFAULT bg-surface-container-lowest/80 p-space-md sm:p-space-lg text-body-reading font-body-reading leading-[2.3] text-on-surface">
+      
+      Contemporary urban planning is undergoing an unprecedented 
+      
+      <!-- Blank 1: paradigm -->
+<span class="inline-flex items-baseline align-middle mx-1 my-0.5">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-feedback-success font-interactive-blank text-interactive-blank bg-feedback-success-glass" style="box-shadow: inset 0 0 0 1px #10b981, 0 0 14px rgba(16,185,129,0.25);">
+          paradigm
+        </span>
+<span class="inline-block ml-1 px-2 py-0.5 rounded bg-surface-glass-medium text-feedback-success text-caption font-caption font-medium align-middle">
+          [ 範式 / 典範 ]
+        </span>
+</span>
+
+      shift. In response to recurring climate volatility, structural engineers must precisely 
+
+      <!-- Blank 2: articulate (INCORRECT) -->
+<span class="inline-flex flex-wrap items-baseline align-middle mx-1 my-0.5 gap-1">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-feedback-error line-through font-interactive-blank text-interactive-blank bg-feedback-error-glass" style="box-shadow: inset 0 0 0 1px #ef4444, 0 0 12px rgba(239,68,68,0.25);" title="Your entry: advocate">
+          advocate
+        </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-feedback-success-glass text-feedback-success font-interactive-blank text-interactive-blank font-semibold" style="box-shadow: inset 0 0 0 1px #10b981;">
+<span class="material-symbols-outlined text-[14px]">check</span>
+          articulate
+          <span class="font-caption text-caption text-feedback-success font-normal">
+            [ 清楚表達 / 口齒伶俐 ]
+          </span>
+</span>
+</span>
+
+      these critical methodologies to governing bodies. Only through a 
+
+      <!-- Blank 3: comprehensive -->
+<span class="inline-flex items-baseline align-middle mx-1 my-0.5">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-feedback-success font-interactive-blank text-interactive-blank bg-feedback-success-glass" style="box-shadow: inset 0 0 0 1px #10b981, 0 0 14px rgba(16,185,129,0.25);">
+          comprehensive
+        </span>
+<span class="inline-block ml-1 px-2 py-0.5 rounded bg-surface-glass-medium text-feedback-success text-caption font-caption font-medium align-middle">
+          [ 全面的 / 詳盡的 ]
+        </span>
+</span>
+
+      audit of existing civil works can municipal leaders deploy genuinely 
+
+      <!-- Blank 4: resilient -->
+<span class="inline-flex items-baseline align-middle mx-1 my-0.5">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-feedback-success font-interactive-blank text-interactive-blank bg-feedback-success-glass" style="box-shadow: inset 0 0 0 1px #10b981, 0 0 14px rgba(16,185,129,0.25);">
+          resilient
+        </span>
+<span class="inline-block ml-1 px-2 py-0.5 rounded bg-surface-glass-medium text-feedback-success text-caption font-caption font-medium align-middle">
+          [ 有韌性的 / 適應力強的 ]
+        </span>
+</span>
+
+      foundations capable of absorbing catastrophic seismic stresses.
+
+    </div>
+<!-- Footnote Hint Bar -->
+<div class="mt-space-sm flex items-center justify-between text-caption font-caption text-text-dim px-space-xs">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">touch_app</span>
+        Click any highlighted term to jump directly to its grammatical breakdown below.
+      </span>
+<span>Passage Corpus ID: TX-ARCH-2025</span>
+</div>
+</section>
+<!-- SECTION 3: Deep Vocabulary Translation & Contextual Explanation Card (Deep Dive) -->
+<section class="relative rounded-lg bg-surface-glass-subtle backdrop-blur-2xl p-space-md sm:p-space-lg shadow-xl" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 4px 0 0 0 #ffffff;">
+<!-- Section Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-space-md mb-space-lg" style="box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.08);">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">psychology</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">
+            Target Vocabulary Translation, Grammar &amp; Collocation Analysis
+          </h3>
+<p class="font-caption text-caption text-text-dim">
+            Precision disambiguation calibrated for B2/C1 academic writing standard.
+          </p>
+</div>
+</div>
+<span class="px-space-md py-1 rounded-full bg-surface-glass-medium text-primary text-caption font-caption font-mono uppercase tracking-wider">
+        3 Lexemes Analyzed
+      </span>
+</div>
+<div class="flex flex-col gap-y-space-lg">
+<!-- BREAKDOWN ITEM 1: articulate (TARGET OF ERROR) -->
+<article class="rounded-DEFAULT bg-surface-glass-subtle p-space-md transition-all hover:bg-surface-glass-medium" style="box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.35);">
+<!-- Header Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm pb-space-sm" style="box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.06);">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-full bg-feedback-error-glass text-feedback-error font-caption text-caption font-semibold uppercase">
+              Action Required
+            </span>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">
+              articulate
+            </h4>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-glass-medium text-on-surface-variant font-caption text-caption">
+              verb / adjective
+            </span>
+<span class="font-mono text-caption text-text-dim">
+              /ɑːrˈtɪk.jə.leɪt/
+            </span>
+</div>
+<!-- Traditional Chinese -->
+<div class="font-label-md text-label-md text-primary font-semibold tracking-wide">
+            清楚表達、明確闡述
+          </div>
+</div>
+<!-- Rationale & Explanation -->
+<div class="mt-space-md flex flex-col gap-space-sm text-body-default font-body-default">
+<div class="p-space-sm rounded bg-surface-container-lowest/60">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-feedback-error font-semibold block mb-1">
+              Contextual Rationale &amp; Distractor Disambiguation
+            </span>
+<p class="text-on-surface leading-relaxed">
+              In this passage, <em class="text-primary font-medium">"articulate these technical strategies"</em> functions as a transitive verb requiring a direct object. <span class="text-feedback-error font-medium">"Advocate"</span> typically pairs with a prepositional phrase or policy goal (<em class="text-on-surface-variant">"advocate for"</em>), making <strong class="text-feedback-success font-semibold">"articulate"</strong> the precise semantic fit.
+            </p>
+</div>
+<!-- Collocations -->
+<div class="flex flex-col sm:flex-row sm:items-center gap-space-xs text-label-sm font-label-sm pt-space-xs">
+<span class="text-text-dim font-medium uppercase text-caption tracking-wider shrink-0">
+              Common collocations:
+            </span>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                articulate an argument
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                articulate a vision
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                articulate clearly
+              </span>
+</div>
+</div>
+</div>
+</article>
+<!-- BREAKDOWN ITEM 2: paradigm -->
+<article class="rounded-DEFAULT bg-surface-glass-subtle p-space-md transition-all hover:bg-surface-glass-medium" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);">
+<!-- Header Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm pb-space-sm" style="box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.06);">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-full bg-feedback-success-glass text-feedback-success font-caption text-caption font-semibold uppercase">
+              Mastered
+            </span>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">
+              paradigm
+            </h4>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-glass-medium text-on-surface-variant font-caption text-caption">
+              noun
+            </span>
+<span class="font-mono text-caption text-text-dim">
+              /ˈpær.ə.daɪm/
+            </span>
+</div>
+<!-- Traditional Chinese -->
+<div class="font-label-md text-label-md text-primary font-semibold tracking-wide">
+            範式、典範、思維模式
+          </div>
+</div>
+<!-- Rationale & Explanation -->
+<div class="mt-space-md flex flex-col gap-space-sm text-body-default font-body-default">
+<div class="p-space-sm rounded bg-surface-container-lowest/60">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-dim font-semibold block mb-1">
+              Contextual Rationale
+            </span>
+<p class="text-on-surface leading-relaxed">
+              Used in the common academic phrasing <em class="text-primary font-medium">"paradigm shift"</em> (思維典範轉移), referencing fundamental alterations in urban design philosophies.
+            </p>
+</div>
+<!-- Collocations -->
+<div class="flex flex-col sm:flex-row sm:items-center gap-space-xs text-label-sm font-label-sm pt-space-xs">
+<span class="text-text-dim font-medium uppercase text-caption tracking-wider shrink-0">
+              Common collocations:
+            </span>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                paradigm shift
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                dominant paradigm
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                cultural paradigm
+              </span>
+</div>
+</div>
+</div>
+</article>
+<!-- BREAKDOWN ITEM 3: resilient -->
+<article class="rounded-DEFAULT bg-surface-glass-subtle p-space-md transition-all hover:bg-surface-glass-medium" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);">
+<!-- Header Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm pb-space-sm" style="box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.06);">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-full bg-feedback-success-glass text-feedback-success font-caption text-caption font-semibold uppercase">
+              Mastered
+            </span>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">
+              resilient
+            </h4>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-glass-medium text-on-surface-variant font-caption text-caption">
+              adjective
+            </span>
+<span class="font-mono text-caption text-text-dim">
+              /rɪˈzɪl.jənt/
+            </span>
+</div>
+<!-- Traditional Chinese -->
+<div class="font-label-md text-label-md text-primary font-semibold tracking-wide">
+            有彈性的、適應力強的、能迅速復原的
+          </div>
+</div>
+<!-- Rationale & Explanation -->
+<div class="mt-space-md flex flex-col gap-space-sm text-body-default font-body-default">
+<div class="p-space-sm rounded bg-surface-container-lowest/60">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-dim font-semibold block mb-1">
+              Contextual Rationale
+            </span>
+<p class="text-on-surface leading-relaxed">
+              Modifiers describing infrastructure in ecological contexts strongly favor <em class="text-primary font-medium">"resilient infrastructure"</em> to denote structural longevity during crises.
+            </p>
+</div>
+<!-- Collocations -->
+<div class="flex flex-col sm:flex-row sm:items-center gap-space-xs text-label-sm font-label-sm pt-space-xs">
+<span class="text-text-dim font-medium uppercase text-caption tracking-wider shrink-0">
+              Common collocations:
+            </span>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                resilient economy
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                highly resilient
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-glass-medium text-primary font-mono text-caption">
+                resilient community
+              </span>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Spaced Repetition Queue Prompt -->
+<div class="mt-space-lg p-space-md rounded-DEFAULT bg-surface-glass-medium flex flex-col sm:flex-row items-center justify-between gap-space-md" style="box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-feedback-success text-[24px]">bookmark_add</span>
+<div>
+<span class="font-label-md text-label-md text-primary font-semibold block">
+            Add "articulate" to Anki / Spaced Repetition Deck?
+          </span>
+<span class="font-caption text-caption text-text-dim">
+            Next optimal review interval scheduled in 12 hours based on SuperMemo algorithm.
+          </span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="px-space-md py-1.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-semibold hover:scale-105 transition-transform" type="button">
+          Queue Word
+        </button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-glass-subtle text-text-dim hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">
+          Dismiss
+        </button>
+</div>
+</div>
+</section>
+</div></div></main><footer class="w-full bg-canvas-black/80 backdrop-blur-xl mt-space-xl"><div class="max-w-[1000px] mx-auto px-margin md:px-margin-desktop py-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm text-primary">VocabFill</span><span class="font-caption text-caption text-text-dim">© 2025 Architectural Monolith</span></div><div class="flex items-center gap-space-lg"><a class="font-caption text-caption text-text-dim hover:text-on-surface transition-colors" data-path="generator" href="#">Studio</a><a class="font-caption text-caption text-text-dim hover:text-on-surface transition-colors" data-path="practice" href="#">Evaluation</a><a class="font-caption text-caption text-text-dim hover:text-on-surface transition-colors" data-path="history" href="#">Archive</a></div></div></footer></body></html>

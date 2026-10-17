@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>出題 - 單字填空練習</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Stars -->
+  <div class="stars-bg" id="stars-bg"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a class="nav-brand" href="index.html">單字填空</a>
+    <div class="nav-links">
+      <a href="generate.html">出題</a>
+      <a href="history.html">紀錄</a>
+    </div>
+    <div class="nav-user">
+      <img class="nav-avatar" id="nav-avatar" src="" alt="" style="display:none;" />
+      <span id="nav-user-name"></span>
+      <button class="btn btn-secondary" id="logout-btn" style="padding:6px 14px;font-size:0.82rem;">登出</button>
+    </div>
+  </nav>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">AI 生成中...</div>
+    <div style="color:var(--text-muted);font-size:0.82rem;margin-top:-8px;">請稍候，約需 10~20 秒</div>
+  </div>
+
+  <div class="container" style="padding-top: 30px;">
+    <h1 class="section-heading" style="font-size:1.5rem; margin-bottom:24px;">設定練習題</h1>
+
+    <div class="card">
+      <!-- 單字庫區塊 -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <label class="form-label" style="margin:0; font-size:1.05rem; font-weight:700; color:#fff;">
+          我的單字庫 (<span id="bank-count">0</span>)
+        </label>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-secondary" id="select-all-btn" style="padding:4px 10px; font-size:0.8rem;">全選</button>
+          <button type="button" class="btn btn-secondary" id="clear-selected-btn" style="padding:4px 10px; font-size:0.8rem;">取消選取</button>
+          <button type="button" class="btn btn-danger" id="clear-bank-btn" style="padding:4px 10px; font-size:0.8rem;">清空單字庫</button>
+        </div>
+      </div>
+      
+      <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:6px;">
+        點選單字可勾選加入本次練習（已選：<span id="selected-count" style="color:#60a5fa; font-weight:bold;">0</span> 個）
+      </p>
+      
+      <div class="word-bank-container" id="word-bank-display">
+        <!-- 動態渲染單字庫 -->
+      </div>
+    </div>
+
+    <div class="card">
+      <!-- 單字匯入區塊 -->
+      <div class="form-group">
+        <label class="form-label" style="font-size:1.05rem; font-weight:700; color:#fff;">
+          快速匯入 / 偵測單字（支援任意混亂格式或大批文字）
+        </label>
+        <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:10px;">
+          直接貼上整篇文章、考卷題目、筆記、或任意格式的文字，系統會自動過濾雜訊並偵測出所有單字！
+        </p>
+        <textarea class="form-textarea" id="words-input" style="min-height:120px;" placeholder="隨意貼上內容，例如：&#10;1. apple - 蘋果&#10;2. [banana] (香蕉)&#10;3. The cherry is delicious...&#10;或是中文：勤奮、節儉、誠實的特質..."></textarea>
+        
+        <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+          <button type="button" class="btn btn-primary" id="extract-words-btn" style="padding:8px 18px;">
+            自動偵測並加入單字庫
+          </button>
+          <span id="detected-info" style="font-size:0.85rem; color:#60a5fa;"></span>
+        </div>
+      </div>
+
+      <!-- 語言選擇 -->
+      <div class="form-group">
+        <label class="form-label" style="color:#fff; font-weight:600;">練習語言</label>
+        <div class="radio-group" id="lang-group">
+          <div class="radio-option active" data-value="en">英文</div>
+          <div class="radio-option"        data-value="zh">中文</div>
+        </div>
+        <input type="hidden" id="lang-value" value="en" />
+      </div>
+
+      <!-- 每篇文章包含幾個單字 -->
+      <div class="form-group">
+        <label class="form-label" style="color:#fff; font-weight:600;">每篇文章包含單字數（最高 10 個）</label>
+        <div class="radio-group" id="words-per-article-group">
+          <div class="radio-option"        data-value="2">2 個</div>
+          <div class="radio-option active" data-value="3">3 個</div>
+          <div class="radio-option"        data-value="5">5 個</div>
+          <div class="radio-option"        data-value="8">8 個</div>
+          <div class="radio-option"        data-value="10">10 個</div>
+        </div>
+        <input type="hidden" id="words-per-article-value" value="3" />
+      </div>
+
+      <!-- 智慧適性化：參考個人歷史答題弱點 -->
+      <div class="form-group" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.14); border-radius:12px; padding:12px 16px; margin-bottom:20px;">
+        <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin:0;">
+          <div>
+            <div style="color:#ffffff; font-weight:600; font-size:0.95rem;">參考過往答題紀錄 (強化弱點出題)</div>
+            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:2px;">AI 自動分析您過去在雲端紀錄中常答錯的單字，加強語境提示與例句練習</div>
+          </div>
+          <input type="checkbox" id="use-history-checkbox" checked style="width:18px; height:18px; accent-color:#ffffff; cursor:pointer;" />
+        </label>
+      </div>
+
+      <button class="btn btn-primary" id="generate-btn" style="width:100%; justify-content:center; padding:14px; font-size:1.05rem;">
+        開始生成練習題
+      </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { requireAuth, initLogoutBtn, initStars, showToast, showLoading, hideLoading, saveToSession } from "./app.js";
+    import { generateExercise, buildOptions } from "./gemini.js";
+    import { getMyExercises } from "./firebase-config.js";
+
+    initStars();
+    initLogoutBtn();
+    requireAuth();
+
+    // ── Radio groups ───────────────────────
+    function initRadioGroup(groupId, hiddenId, onChange) {
+      const group = document.getElementById(groupId);
+      group.querySelectorAll(".radio-option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          group.querySelectorAll(".radio-option").forEach(o => o.classList.remove("active"));
+          opt.classList.add("active");
+          document.getElementById(hiddenId).value = opt.dataset.value;
+          if (onChange) onChange(opt.dataset.value);
+        });
+      });
+    }
+
+    // ── Word Bank State ────────────────────
+    let wordBank = JSON.parse(localStorage.getItem("vocab_bank") || "[]");
+    let selectedWords = new Set();
+
+    function saveWordBank() {
+      localStorage.setItem("vocab_bank", JSON.stringify(wordBank));
+      renderWordBank();
+    }
+
+    function renderWordBank() {
+      const container = document.getElementById("word-bank-display");
+      const bankCount = document.getElementById("bank-count");
+      const selCount = document.getElementById("selected-count");
+      
+      bankCount.textContent = wordBank.length;
+      selCount.textContent = selectedWords.size;
+      
+      if (wordBank.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem; padding:10px 0; width:100%; text-align:center;">單字庫目前是空的，請在下方貼上文字後點擊「自動偵測」！</div>';
+        return;
+      }
+
+      container.innerHTML = "";
+      wordBank.forEach((w) => {
+        const chip = document.createElement("div");
+        const isSelected = selectedWords.has(w);
+        chip.className = `word-bank-chip ${isSelected ? "selected" : ""}`;
+        chip.innerHTML = `
+          <span>${w}</span>
+          <span class="remove-word" title="刪除此單字">✕</span>
+        `;
+
+        chip.addEventListener("click", (e) => {
+          if (e.target.classList.contains("remove-word")) {
+            e.stopPropagation();
+            wordBank = wordBank.filter(item => item !== w);
+            selectedWords.delete(w);
+            saveWordBank();
+            return;
+          }
+          if (selectedWords.has(w)) {
+            selectedWords.delete(w);
+          } else {
+            selectedWords.add(w);
+          }
+          renderWordBank();
+        });
+
+        container.appendChild(chip);
+      });
+    }
+
+    // ── Smart Multi-format Word Detection ─────────────────
+    function smartExtractWords(text, lang) {
+      if (!text) return [];
+      let results = [];
+
+      if (lang === "en") {
+        // 抓出所有英文字詞（過濾掉數字、符號、常見短冠詞）
+        const matches = text.match(/[A-Za-z]+(?:'[A-Za-z]+)?/g) || [];
+        const stopWords = new Set(["the", "a", "an", "is", "are", "was", "were", "and", "or", "in", "on", "at", "to", "for", "of", "with"]);
+        results = matches
+          .map(w => w.toLowerCase())
+          .filter(w => w.length >= 2 && !stopWords.has(w));
+      } else {
+        // 中文：過濾標點符號、數字、空白
+        // 若有逗號、換行、頓號、空格分詞則優先按分隔符拆解；否則萃取 2~4 字的常見詞彙
+        const splitByPunct = text.split(/[\s,、，\n\t.;:!?"'()\[\]{}0-9一二三四五六七八九十]+/);
+        results = splitByPunct
+          .map(w => w.trim())
+          .filter(w => w.length >= 2 && /^[\u4e00-\u9fa5]+$/.test(w));
+      }
+
+      // 去重
+      return Array.from(new Set(results));
+    }
+
+    const wordsInput = document.getElementById("words-input");
+    const extractBtn = document.getElementById("extract-words-btn");
+    const detectedInfo = document.getElementById("detected-info");
+
+    extractBtn.addEventListener("click", () => {
+      const text = wordsInput.value;
+      const lang = document.getElementById("lang-value").value;
+      if (!text.trim()) {
+        showToast("請先在輸入框貼上內容", "error");
+        return;
+      }
+
+      const extracted = smartExtractWords(text, lang);
+      if (extracted.length === 0) {
+        showToast("未偵測到有效單字，請檢查語言設定", "error");
+        return;
+      }
+
+      let addedCount = 0;
+      extracted.forEach(w => {
+        if (!wordBank.includes(w)) {
+          wordBank.push(w);
+          selectedWords.add(w); // 自動勾選新加入的單字
+          addedCount++;
+        } else {
+          selectedWords.add(w);
+        }
+      });
+
+      saveWordBank();
+      wordsInput.value = "";
+      detectedInfo.textContent = `🎉 偵測到 ${extracted.length} 個單字（新增 ${addedCount} 個）`;
+      showToast(`已成功將 ${extracted.length} 個單字收錄至單字庫！`, "success");
+    });
+
+    document.getElementById("select-all-btn").addEventListener("click", () => {
+      wordBank.forEach(w => selectedWords.add(w));
+      renderWordBank();
+    });
+
+    document.getElementById("clear-selected-btn").addEventListener("click", () => {
+      selectedWords.clear();
+      renderWordBank();
+    });
+
+    document.getElementById("clear-bank-btn").addEventListener("click", () => {
+      if (confirm("確定要清空單字庫嗎？")) {
+        wordBank = [];
+        selectedWords.clear();
+        saveWordBank();
+      }
+    });
+
+    initRadioGroup("lang-group", "lang-value");
+    initRadioGroup("words-per-article-group", "words-per-article-value");
+    initRadioGroup("num-articles-group", "num-articles-value");
+
+    renderWordBank();
+
+    // ── Generate ───────────────────────────
+    document.getElementById("generate-btn").addEventListener("click", async () => {
+      let wordsToUse = Array.from(selectedWords);
+
+      // 如果單字庫沒有選取，檢查輸入框是否還有未點擊偵測的文字
+      if (wordsToUse.length === 0 && wordsInput.value.trim()) {
+        const lang = document.getElementById("lang-value").value;
+        const autoExtracted = smartExtractWords(wordsInput.value, lang);
+        if (autoExtracted.length > 0) {
+          wordsToUse = autoExtracted;
+        }
+      }
+
+      if (wordsToUse.length === 0) {
+        showToast("請在單字庫中勾選至少 1 個單字，或在下方輸入單字！", "error");
+        return;
+      }
+
+      // 取得設定值
+      const wordsPerArticle = parseInt(document.getElementById("words-per-article-value").value, 10) || 3;
+      const numArticlesVal = document.getElementById("num-articles-value").value;
+      const numArticles = numArticlesVal === "auto" ? null : parseInt(numArticlesVal, 10);
+
+      // 若指定了篇數，計算需要多少單字
+      if (numArticles) {
+        const neededWords = numArticles * wordsPerArticle;
+        if (wordsToUse.length > neededWords) {
+          wordsToUse = wordsToUse.slice(0, neededWords);
+        }
+      } else {
+        // 自動劃分時，上限提高至 20 個單字
+        if (wordsToUse.length > 20) {
+          showToast(`單字數量較多，已為您安排前 20 個單字生成題目！`, "info");
+          wordsToUse = wordsToUse.slice(0, 20);
+        }
+      }
+
+      const lang       = document.getElementById("lang-value").value;
+      const difficulty = "middle";
+      const useHistory = document.getElementById("use-history-checkbox").checked;
+
+      showLoading("AI 正在分析學習紀錄並生成客製題目與詳解...");
+      try {
+        let historySummary = null;
+        if (useHistory) {
+          try {
+            const pastList = await getMyExercises();
+            if (pastList && pastList.length > 0) {
+              const recent = pastList.slice(0, 5);
+              const weakWords = new Set();
+              recent.forEach(r => {
+                // 如果有錯題單字
+                if (r.incorrectWords && Array.isArray(r.incorrectWords)) {
+                  r.incorrectWords.forEach(w => weakWords.add(w));
+                }
+              });
+              historySummary = `The student has completed ${pastList.length} past exercises. ` +
+                (weakWords.size > 0 ? `Historically missed/weak words include: ${Array.from(weakWords).join(", ")}. ` : "") +
+                `Average recent score: ${Math.round(recent.reduce((acc, cur) => acc + (cur.score ? cur.score.pct : 80), 0) / recent.length)}%.`;
+            }
+          } catch (histErr) {
+            console.warn("Could not load past history for context:", histErr);
+          }
+        }
+
+        let exerciseData = await generateExercise(wordsToUse, lang, difficulty, {
+          wordsPerArticle,
+          numArticles,
+          historySummary
+        });
+        exerciseData = buildOptions(exerciseData);
+        saveToSession("currentExercise", exerciseData);
+        window.location.href = "practice.html";
+      } catch (e) {
+        hideLoading();
+        showToast("生成失敗：" + e.message, "error");
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+</html>

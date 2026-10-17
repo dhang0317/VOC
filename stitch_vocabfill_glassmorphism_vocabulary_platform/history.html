@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>歷史紀錄 - 單字填空練習</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Stars -->
+  <div class="stars-bg" id="stars-bg"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a class="nav-brand" href="index.html">單字填空</a>
+    <div class="nav-links">
+      <a href="generate.html">出題</a>
+      <a href="history.html">紀錄</a>
+    </div>
+    <div class="nav-user">
+      <img class="nav-avatar" id="nav-avatar" src="" alt="" style="display:none;" />
+      <span id="nav-user-name"></span>
+      <button class="btn btn-secondary" id="logout-btn" style="padding:6px 14px;font-size:0.82rem;">登出</button>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-top: 30px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+      <h1 class="section-heading" style="font-size:1.5rem; margin-bottom:0; flex:1;">練習紀錄</h1>
+      <a href="generate.html" class="btn btn-primary">出新題目</a>
+    </div>
+
+    <!-- Loading state -->
+    <div id="history-loading" style="text-align:center; padding:40px; color:var(--text-muted);">
+      <div class="spinner" style="margin: 0 auto 16px;"></div>
+      載入中...
+    </div>
+
+    <!-- Empty state -->
+    <div id="history-empty" class="empty-state" style="display:none;">
+      <p style="font-size:1.1rem; margin-bottom:16px;">還沒有練習紀錄</p>
+      <a href="generate.html" class="btn btn-primary">開始第一次練習</a>
+    </div>
+
+    <!-- History list -->
+    <div id="history-list"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { requireAuth, initLogoutBtn, initStars, showToast, DIFFICULTY_LABELS, LANG_LABELS, formatDate, saveToSession } from "./app.js";
+    import { getMyExercises } from "./firebase-config.js";
+
+    initStars();
+    initLogoutBtn();
+    await requireAuth();
+
+    // ── Load history ───────────────────────
+    async function loadHistory() {
+      const loadingEl = document.getElementById("history-loading");
+      const emptyEl   = document.getElementById("history-empty");
+      const listEl    = document.getElementById("history-list");
+
+      try {
+        const exercises = await getMyExercises();
+        loadingEl.style.display = "none";
+
+        if (exercises.length === 0) {
+          emptyEl.style.display = "block";
+          return;
+        }
+
+        exercises.forEach(ex => {
+          const item = document.createElement("div");
+          item.className = "history-item";
+          item.style.cursor = "pointer";
+
+          const words    = (ex.words || []).join("、");
+          const diffLabel = DIFFICULTY_LABELS[ex.difficulty] || ex.difficulty || "";
+          const langLabel = LANG_LABELS[ex.lang] || ex.lang || "";
+          const dateStr  = ex.createdAt ? formatDate(ex.createdAt) : "";
+          const score    = ex.score ? `${ex.score.correct}/${ex.score.total} (${ex.score.pct}%)` : "未計分";
+          const langBadge = ex.lang === "en" ? "badge-en" : "badge-zh";
+
+          item.innerHTML = `
+            <div style="flex:1; min-width:0;">
+              <div class="history-words">${words || "（無單字）"}</div>
+              <div class="history-meta">
+                📅 ${dateStr} &nbsp;|&nbsp;
+                📚 ${diffLabel} &nbsp;|&nbsp;
+                🎯 得分：${score}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+              <span class="history-badge ${langBadge}">${langLabel}</span>
+              <span style="color:var(--text-muted);">▶</span>
+            </div>
+          `;
+
+          item.addEventListener("click", () => {
+            // Restore exercise and go to practice
+            saveToSession("currentExercise", ex);
+            window.location.href = "practice.html";
+          });
+
+          listEl.appendChild(item);
+        });
+      } catch (e) {
+        loadingEl.style.display = "none";
+        showToast("載入失敗：" + e.message, "error");
+        console.error(e);
+      }
+    }
+
+    loadHistory();
+  </script>
+</body>
+</html>

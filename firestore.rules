@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /exercises/{docId} {
+      // 只能存取與自己 UID 匹配的練習紀錄
+      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
+      // 登入的使用者可以建立自己的題目
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    }
+  }
+}

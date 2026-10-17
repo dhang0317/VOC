@@ -1,0 +1,1 @@
+// stitch app js placeholder

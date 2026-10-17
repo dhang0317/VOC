@@ -1,0 +1,12 @@
+{
+  "name": "vocab-fill",
+  "version": "1.0.0",
+  "description": "Adaptive Vocabulary Drill Platform",
+  "cleanUrls": true,
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

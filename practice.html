@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>VocabFill — Precision Language Mastery</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "canvas-black": "#000000",
+            "surface-glass-subtle": "rgba(255, 255, 255, 0.04)",
+            "surface-glass-medium": "rgba(255, 255, 255, 0.08)",
+            "surface-glass-elevated": "rgba(255, 255, 255, 0.15)",
+            "border-glass-hairline": "rgba(255, 255, 255, 0.15)",
+            "border-glass-active": "rgba(255, 255, 255, 0.3)",
+            "border-glass-focus": "rgba(255, 255, 255, 0.5)",
+            "feedback-success": "#10b981",
+            "feedback-success-glass": "rgba(16, 185, 129, 0.18)",
+            "feedback-error": "#ef4444",
+            "feedback-error-glass": "rgba(239, 68, 68, 0.2)",
+            "primary": "#ffffff",
+            "on-primary": "#000000",
+            "on-surface": "#e2e2e2",
+            "on-surface-variant": "#c4c7c8",
+            "text-dim": "#737373"
+          },
+          fontFamily: {
+            "body-default": ["Geist", "sans-serif"],
+            "headline-sm": ["Geist", "sans-serif"],
+            "headline-lg": ["Geist", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @layer base {
+      html, body { margin:0; padding:0; }
+      body { overscroll-behavior:none; }
+    }
+    ::-webkit-scrollbar { display:none; }
+    .interactive-slot {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 4px;
+      padding: 2px 14px;
+      border-radius: 9999px;
+      min-width: 100px;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      border: 1px dashed rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.06);
+      color: #ffffff;
+    }
+    .interactive-slot:hover {
+      border-color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.12);
+    }
+    .interactive-slot.active-target {
+      border: 1px solid #ffffff;
+      background: rgba(255,255,255,0.22);
+      box-shadow: 0 0 16px rgba(255,255,255,0.35);
+    }
+    .interactive-slot.filled {
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.15);
+    }
+    .interactive-slot.correct-answer {
+      border: 1px solid #10b981 !important;
+      background: rgba(16, 185, 129, 0.2) !important;
+      color: #10b981 !important;
+      box-shadow: 0 0 14px rgba(16,185,129,0.35);
+    }
+    .interactive-slot.wrong-answer {
+      border: 1px solid #ef4444 !important;
+      background: rgba(239, 68, 68, 0.2) !important;
+      color: #ef4444 !important;
+      text-decoration: line-through;
+    }
+    .spelling-input-field {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 9999px;
+      padding: 2px 12px;
+      color: #ffffff;
+      outline: none;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .spelling-input-field:focus {
+      border-color: #ffffff;
+      box-shadow: 0 0 14px rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.15);
+    }
+  </style>
+</head>
+<body class="bg-canvas-black font-body-default text-on-surface antialiased min-h-screen">
+  
+  <!-- Fixed Header -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-black/60 backdrop-blur-2xl">
+    <div class="h-20 max-w-[1000px] mx-auto px-4 md:px-8 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <a class="flex items-center gap-2 group" href="generate.html">
+          <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-95">
+            <span class="material-symbols-outlined text-black text-[15px]">edit_square</span>
+          </div>
+          <span class="font-headline-sm text-[1.15rem] font-bold text-primary tracking-tight">VocabFill</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-1 p-1 bg-surface-glass-subtle rounded-full backdrop-blur-md">
+          <a class="px-4 py-1.5 rounded-full font-label-md text-on-surface-variant hover:text-primary transition-all" href="generate.html">Generator</a>
+          <a aria-current="page" class="px-4 py-1.5 rounded-full font-label-md bg-surface-glass-medium text-primary shadow-[0_0_16px_rgba(255,255,255,0.08)] font-semibold" href="practice.html">Practice</a>
+          <a class="px-4 py-1.5 rounded-full font-label-md text-on-surface-variant hover:text-primary transition-all" href="history.html">History</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 pl-2 pr-4 py-1 rounded-full bg-surface-glass-subtle backdrop-blur-md">
+          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black font-bold text-sm" id="nav-user-initial">
+            U
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs text-primary font-semibold leading-none" id="nav-user-name">User</span>
+            <span class="text-[10px] text-text-dim leading-none mt-0.5">Scholar</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="px-4 py-1.5 rounded-full text-xs text-on-surface-variant hover:text-primary hover:bg-surface-glass-medium bg-surface-glass-subtle backdrop-blur-md transition-all">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Practice Viewport -->
+  <main class="w-full pt-20 bg-canvas-black h-screen overflow-hidden">
+    <div class="max-w-[1360px] mx-auto px-4 md:px-8 h-full">
+
+      <!-- Dual-Column Layout: Left Controls Sidebar + Right Exercise Stage (Independent Scrolling) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start h-full py-4">
+
+        <!-- LEFT SIDEBAR: Independent Scrollable (col-span-4) -->
+        <aside class="lg:col-span-4 h-full overflow-y-auto pr-1 flex flex-col gap-5">
+          
+          <!-- Session Status & Diagnostics Card -->
+          <div class="p-5 rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-3 border-b border-border-glass-hairline/60">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-feedback-success shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></span>
+                <span class="text-xs text-primary font-bold tracking-wide">測驗控制中心</span>
+              </div>
+              <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-primary">
+                <span class="material-symbols-outlined text-[14px] text-on-surface-variant">timer</span>
+                <span id="session-timer">00:00</span>
+              </div>
+            </div>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-semibold text-text-dim uppercase tracking-wider">切換題型</label>
+              <div class="p-1 bg-black/60 border border-border-glass-hairline rounded-xl flex flex-col gap-1">
+                <button id="tab-btn-article" class="tab-mode w-full py-2 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-between cursor-pointer bg-white text-black shadow-sm">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">menu_book</span>
+                    <span>文章填空 (Article)</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward_ios</span>
+                </button>
+                <button id="tab-btn-sentence" class="tab-mode w-full py-2 px-3 rounded-lg text-xs text-on-surface-variant hover:text-primary transition-all flex items-center justify-between cursor-pointer font-medium">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">rule</span>
+                    <span>句子選擇 (Sentences)</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward_ios</span>
+                </button>
+                <button id="tab-btn-spelling" class="tab-mode w-full py-2 px-3 rounded-lg text-xs text-on-surface-variant hover:text-primary transition-all flex items-center justify-between cursor-pointer font-medium">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">spellcheck</span>
+                    <span>造句手寫 (Spelling)</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward_ios</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lexicon Tray in Sidebar (Hidden as requested) -->
+            <div id="lexicon-dock" class="hidden">
+              <div id="current-staged-display"></div>
+              <div id="lexicon-chips-container"></div>
+            </div>
+
+            <!-- Submit Action Card -->
+            <div class="pt-3 border-t border-border-glass-hairline/60 flex flex-col gap-2.5">
+              <button id="btn-submit" type="button" class="w-full py-3.5 px-4 rounded-full text-sm text-black bg-white font-bold hover:bg-neutral-200 hover:shadow-[0_0_28px_rgba(255,255,255,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg">
+                <span class="material-symbols-outlined text-[18px]">verified</span>
+                <span>送出評分並自動儲存</span>
+              </button>
+              <div class="flex items-center justify-between text-[11px] text-text-dim px-1 font-mono">
+                <span id="completion-status-text">Status: Ready</span>
+                <span>Cloud Synced</span>
+              </div>
+            </div>
+
+          </div>
+        </aside>
+
+        <!-- RIGHT EXERCISE MAIN STAGE: Independent Scrollable (col-span-8) -->
+        <section class="lg:col-span-8 h-full overflow-y-auto pr-1 pb-16 flex flex-col gap-6">
+
+          <!-- TAB 1: ARTICLE FILL-IN -->
+          <div id="section-article" class="space-y-6">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- TAB 2: SENTENCE MULTIPLE CHOICE -->
+          <div id="section-sentence" class="hidden space-y-6">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- TAB 3: SPELLING (First & Last letter cues, self-input) -->
+          <div id="section-spelling" class="hidden space-y-6">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- RESULTS & EXPLANATION CONTAINER (Revealed after submit) -->
+          <div id="results-container" class="hidden space-y-6">
+        <!-- Section 1: Summary Banner -->
+        <section class="rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 md:p-8 shadow-2xl relative overflow-hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border-glass-hairline/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_8px_#ffffff]"></span>
+              <h2 class="text-sm uppercase tracking-wider font-bold text-primary">Exercise Evaluation & Analytics Summary</h2>
+            </div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-glass-medium border border-border-glass-hairline">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-feedback-success opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-feedback-success"></span>
+              </span>
+              <span class="text-xs text-on-surface-variant font-medium">Synced to Firestore Cloud Storage</span>
+              <span class="material-symbols-outlined text-[14px] text-feedback-success">cloud_done</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 pt-6">
+            <div class="md:col-span-5 p-5 rounded-xl bg-surface-glass-medium border border-border-glass-hairline flex flex-col justify-between">
+              <span class="text-xs uppercase tracking-wider text-text-dim">Overall Precision Score</span>
+              <div class="my-4 flex items-baseline gap-3">
+                <span class="text-4xl font-extrabold text-primary" id="res-score-ratio">0 / 0</span>
+                <span class="text-lg font-bold text-feedback-success" id="res-score-pct">0%</span>
+              </div>
+              <div class="w-full bg-surface-glass-medium rounded-full h-2 overflow-hidden">
+                <div id="res-score-bar" class="h-full bg-feedback-success rounded-full shadow-[0_0_12px_rgba(16,185,129,0.8)] transition-all duration-1000" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 p-5 rounded-xl bg-surface-glass-medium border border-border-glass-hairline flex flex-col justify-between gap-3">
+              <div>
+                <span class="text-xs uppercase tracking-wider text-text-dim">Cognitive Insights & Diagnosis</span>
+                <p class="text-sm text-primary mt-1" id="res-feedback-text">
+                  正在評估作答結果...
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-2">
+                <a href="generate.html" class="px-5 py-2 rounded-full text-xs font-semibold bg-primary text-black hover:bg-neutral-200 transition-colors">
+                  再出一次題 (New Drill)
+                </a>
+                <a href="history.html" class="px-5 py-2 rounded-full text-xs font-medium bg-surface-glass-elevated text-primary border border-border-glass-hairline hover:bg-surface-glass-medium transition-colors">
+                  查看歷史弱點 (View History)
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast-banner" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] backdrop-blur-2xl bg-black/90 px-5 py-2.5 rounded-full shadow-2xl border border-border-glass-active flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-feedback-success animate-pulse"></span>
+    <span class="text-xs text-primary font-medium" id="toast-text">Lexical state updated</span>
+  </div>
+
+  <script type="module">
+    import { requireAuth, logout, saveExercise } from "./firebase-config.js";
+    import { loadFromSession, initTextSelectionTranslator } from "./app.js";
+
+    // 啟動反白文字即時翻譯與單字庫收錄功能
+    initTextSelectionTranslator();
+
+    let exerciseData = loadFromSession("currentExercise");
+    let currentUser = null;
+
+    let articleAnswers = {};
+    let sentenceAnswers = {};
+    let spellingAnswers = {};
+    let currentTab = "article"; // 'article' | 'sentence' | 'spelling'
+    let submittedTabs = {
+      article: false,
+      sentence: false,
+      spelling: false
+    };
+    let submitted = false; // true once all active tabs are submitted
+    let selectedWord = null;
+
+    // Toast
+    const toast = document.getElementById("toast-banner");
+    const toastText = document.getElementById("toast-text");
+    function showToast(msg) {
+      if (!toast) return;
+      toastText.textContent = msg;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 2600);
+    }
+
+    requireAuth((user) => {
+      currentUser = user;
+      const nameEl = document.getElementById("nav-user-name");
+      const initialEl = document.getElementById("nav-user-initial");
+      if (nameEl) nameEl.textContent = user.displayName || user.email.split('@')[0];
+      if (initialEl) initialEl.textContent = (user.displayName || user.email)[0].toUpperCase();
+    });
+
+    document.getElementById("logout-btn")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      logout().then(() => window.location.href = "index.html");
+    });
+
+    // Session Timer
+    let totalSeconds = 0;
+    setInterval(() => {
+      if (submitted) return;
+      totalSeconds++;
+      const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+      const secs = String(totalSeconds % 60).padStart(2, '0');
+      const timerEl = document.getElementById("session-timer");
+      if (timerEl) timerEl.textContent = `${mins}:${secs}`;
+    }, 1000);
+
+    // Tab Switching
+    const tabBtnArticle = document.getElementById("tab-btn-article");
+    const tabBtnSentence = document.getElementById("tab-btn-sentence");
+    const tabBtnSpelling = document.getElementById("tab-btn-spelling");
+    const secArticle = document.getElementById("section-article");
+    const secSentence = document.getElementById("section-sentence");
+    const secSpelling = document.getElementById("section-spelling");
+    const lexiconDock = document.getElementById("lexicon-dock");
+    const btnSubmit = document.getElementById("btn-submit");
+
+    function updateSubmitButtonState() {
+      if (!btnSubmit) return;
+      const tabNames = {
+        article: "文章填空",
+        sentence: "句子選擇",
+        spelling: "造句手寫"
+      };
+      const curName = tabNames[currentTab] || "目前頁面";
+      if (submittedTabs[currentTab]) {
+        btnSubmit.innerHTML = `
+          <span class="material-symbols-outlined text-[18px] text-feedback-success">check_circle</span>
+          <span>${curName}：已核對答案</span>
+        `;
+        btnSubmit.classList.add("opacity-60", "cursor-not-allowed");
+      } else {
+        btnSubmit.innerHTML = `
+          <span class="material-symbols-outlined text-[18px]">verified</span>
+          <span>核對【${curName}】答案</span>
+        `;
+        btnSubmit.classList.remove("opacity-60", "cursor-not-allowed");
+      }
+    }
+
+    function switchTab(tabKey, activeBtn, showSec, isSpelling = false) {
+      currentTab = tabKey;
+      [tabBtnArticle, tabBtnSentence, tabBtnSpelling].forEach(b => {
+        b.className = "tab-mode w-full py-2 px-3 rounded-lg text-xs text-on-surface-variant hover:text-primary transition-all flex items-center justify-between cursor-pointer font-medium";
+      });
+      activeBtn.className = "tab-mode w-full py-2 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-between cursor-pointer bg-white text-black shadow-sm";
+      
+      [secArticle, secSentence, secSpelling].forEach(s => s.classList.add("hidden"));
+      showSec.classList.remove("hidden");
+
+      if (isSpelling) {
+        lexiconDock.classList.add("opacity-40", "pointer-events-none");
+      } else {
+        lexiconDock.classList.remove("opacity-40", "pointer-events-none");
+      }
+
+      updateSubmitButtonState();
+    }
+
+    tabBtnArticle.addEventListener("click", () => switchTab("article", tabBtnArticle, secArticle, false));
+    tabBtnSentence.addEventListener("click", () => switchTab("sentence", tabBtnSentence, secSentence, false));
+    tabBtnSpelling.addEventListener("click", () => switchTab("spelling", tabBtnSpelling, secSpelling, true));
+
+    // Render Lexicon Dock
+    function renderLexiconDock() {
+      const container = document.getElementById("lexicon-chips-container");
+      container.innerHTML = "";
+      if (!exerciseData) return;
+
+      const words = exerciseData.words || [];
+      words.forEach(w => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("data-word", w);
+        btn.className = "lex-chip px-4 py-1.5 rounded-full text-xs font-semibold text-on-surface bg-surface-glass-medium border border-border-glass-hairline hover:bg-surface-glass-elevated hover:border-white transition-all";
+        btn.innerHTML = `<span>${w}</span>`;
+        btn.addEventListener("click", () => {
+          if (submitted) return;
+          if (selectedWord === w) {
+            selectedWord = null;
+            document.getElementById("current-staged-display").textContent = "未選取";
+            document.querySelectorAll(".lex-chip").forEach(c => c.classList.remove("bg-white", "text-black", "border-white"));
+          } else {
+            selectedWord = w;
+            document.getElementById("current-staged-display").textContent = w;
+            document.querySelectorAll(".lex-chip").forEach(c => {
+              if (c.getAttribute("data-word") === w) {
+                c.classList.add("bg-white", "text-black", "border-white");
+              } else {
+                c.classList.remove("bg-white", "text-black", "border-white");
+              }
+            });
+            showToast(`已選取單字 [${w}]，請點擊空格填入`);
+          }
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    // Build Articles
+    function buildArticles() {
+      secArticle.innerHTML = "";
+      if (!exerciseData || !exerciseData.articles || exerciseData.articles.length === 0) {
+        secArticle.innerHTML = '<div class="p-8 text-center text-text-dim text-sm">無文章題目</div>';
+        return;
+      }
+
+      exerciseData.articles.forEach((art, aIdx) => {
+        articleAnswers[aIdx] = {};
+        const card = document.createElement("article");
+        card.className = "rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 md:p-8 flex flex-col gap-5 shadow-2xl";
+        
+        let text = art.text || "";
+        const blanks = art.blanks || [];
+        // 強韌的正則表達式：支援 [BLANK_1], [BLANK_2], (1), (2), [1], [2], ___BLANK___, ____ 等各種模型佔位符
+        const blankPlaceholderRegex = /\[BLANK[_\s]*\d+\]|\((\d+)\)|\[(\d+)\]|(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
+        let placeholderCount = 0;
+
+        if (blankPlaceholderRegex.test(text)) {
+          text = text.replace(blankPlaceholderRegex, (match, p1, p2) => {
+            // 若為 (1) 或 [1]，嘗試優先採用括號內的序號 (轉 0-based)
+            const explicitIndex = p1 ? parseInt(p1, 10) - 1 : (p2 ? parseInt(p2, 10) - 1 : null);
+            const bIdx = (explicitIndex !== null && !isNaN(explicitIndex) && explicitIndex >= 0 && explicitIndex < blanks.length)
+              ? explicitIndex 
+              : placeholderCount++;
+            
+            const targetWord = (blanks[bIdx] && blanks[bIdx].word) || (art.targetWords && art.targetWords[bIdx]) || "";
+            return `<span class="interactive-slot" id="art-slot-${aIdx}-${bIdx}" data-word="${targetWord}">(${bIdx + 1}) ____</span>`;
+          });
+        } else {
+          // 若內文全無佔位符，則依據單字直接替換為挖空格
+          blanks.forEach((b, bIdx) => {
+            const w = (b.word || "").trim();
+            if (!w) return;
+            const regex = new RegExp(`\\b${w}\\b`, "i");
+            text = text.replace(regex, `<span class="interactive-slot" id="art-slot-${aIdx}-${bIdx}" data-word="${w}">(${bIdx + 1}) ____</span>`);
+          });
+        }
+
+        const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
+        const bodyHtml = paragraphs.map(p => `<p class="leading-relaxed mb-4 text-[1rem]">${p}</p>`).join("");
+
+
+        // 收集本篇文章的所有備選單字（包含 blanks 與額外干擾選項/本篇目標字，打亂排序）
+        const passageWords = Array.from(new Set([
+          ...(blanks.map(b => (b.word || "").trim()).filter(Boolean)),
+          ...((art.targetWords || []).map(w => String(w).trim()).filter(Boolean))
+        ])).sort(() => Math.random() - 0.5);
+
+        const optionsChipsHtml = passageWords.map(w => `
+          <button type="button" class="art-opt-chip px-3.5 py-1 rounded-full text-xs font-semibold bg-white/10 hover:bg-white hover:text-black border border-white/20 text-primary transition-all cursor-pointer shadow-sm" data-word="${w}" data-art="${aIdx}">
+            ${w}
+          </button>
+        `).join("");
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-3 border-b border-border-glass-hairline/60">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-surface-glass-medium text-text-dim uppercase tracking-wider">Passage ${aIdx + 1}</span>
+              <h3 class="text-base font-bold text-primary">${art.title || 'Contextual Reading Drill'}</h3>
+            </div>
+            <span class="text-xs text-text-dim">學測標準篇章克漏字</span>
+          </div>
+
+          <!-- 本文單字選項庫 (Word Bank for Passage) -->
+          <div class="p-3.5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-md flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <span class="material-symbols-outlined text-[15px] text-feedback-success">format_list_bulleted</span>
+                <span>篇章備選單字庫 (Word Bank Options)</span>
+              </div>
+              <span class="text-[11px] text-text-dim">
+                目前選取：<strong id="art-active-word-${aIdx}" class="text-feedback-success font-semibold">未選取</strong>
+              </span>
+            </div>
+            <div class="flex flex-wrap gap-2 pt-0.5" id="art-chips-bar-${aIdx}">
+              ${optionsChipsHtml}
+            </div>
+          </div>
+
+          <div class="text-on-surface leading-loose text-justify md:text-left">
+            ${bodyHtml}
+          </div>
+          <!-- Inline Contextual Explanation Box (Revealed upon submit) -->
+          <div id="art-inline-exp-${aIdx}" class="hidden mt-4 pt-3 border-t border-border-glass-hairline/60 flex flex-col gap-2">
+            <!-- Rendered upon submit -->
+          </div>
+        `;
+        secArticle.appendChild(card);
+
+        // Bind options chips and blanks
+        setTimeout(() => {
+          let activePassageWord = null;
+          const activeDisplay = document.getElementById(`art-active-word-${aIdx}`);
+          const chipsBar = document.getElementById(`art-chips-bar-${aIdx}`);
+
+          if (chipsBar) {
+            chipsBar.querySelectorAll(".art-opt-chip").forEach(btn => {
+              btn.addEventListener("click", () => {
+                if (submittedTabs.article) return;
+                const clickedWord = btn.getAttribute("data-word");
+                if (activePassageWord === clickedWord) {
+                  activePassageWord = null;
+                  if (activeDisplay) activeDisplay.textContent = "未選取";
+                  chipsBar.querySelectorAll(".art-opt-chip").forEach(c => c.classList.remove("bg-white", "text-black"));
+                } else {
+                  activePassageWord = clickedWord;
+                  if (activeDisplay) activeDisplay.textContent = clickedWord;
+                  chipsBar.querySelectorAll(".art-opt-chip").forEach(c => c.classList.remove("bg-white", "text-black"));
+                  btn.classList.add("bg-white", "text-black");
+                  showToast(`已選取單字 [${clickedWord}]，請點選短文中的空格填入！`);
+                }
+              });
+            });
+          }
+
+          blanks.forEach((b, bIdx) => {
+            const slotEl = document.getElementById(`art-slot-${aIdx}-${bIdx}`);
+            if (!slotEl) return;
+            slotEl.addEventListener("click", () => {
+              if (submittedTabs.article) return;
+              const fillWord = activePassageWord || selectedWord;
+              if (fillWord) {
+                articleAnswers[aIdx][bIdx] = fillWord;
+                slotEl.textContent = fillWord;
+                slotEl.classList.add("filled");
+                showToast(`已填入 "${fillWord}"`);
+              } else if (articleAnswers[aIdx][bIdx]) {
+                delete articleAnswers[aIdx][bIdx];
+                slotEl.textContent = `(${bIdx + 1}) ____`;
+                slotEl.classList.remove("filled");
+                showToast("已清除空格內容");
+              } else {
+                showToast("請先點選上方的單字選項標籤，再點此空格填入！");
+              }
+            });
+          });
+        }, 0);
+      });
+    }
+
+    // Build Sentences (Multiple Choice)
+    function buildSentences() {
+      secSentence.innerHTML = "";
+      if (!exerciseData || !exerciseData.sentences || exerciseData.sentences.length === 0) {
+        secSentence.innerHTML = '<div class="p-8 text-center text-text-dim text-sm">無句子題目</div>';
+        return;
+      }
+
+      exerciseData.sentences.forEach((group, sIdx) => {
+        sentenceAnswers[sIdx] = {};
+        const card = document.createElement("div");
+        card.className = "rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 flex flex-col gap-4 shadow-xl";
+
+        card.innerHTML = `
+          <div class="flex items-center gap-2 pb-2 border-b border-border-glass-hairline/60">
+            <span class="text-xs text-text-dim uppercase tracking-wider font-semibold">目標單字:</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 border border-white/20 text-primary">${group.word}</span>
+          </div>
+        `;
+
+        (group.items || []).forEach((item, iIdx) => {
+          sentenceAnswers[sIdx][iIdx] = null;
+          const itemBox = document.createElement("div");
+          itemBox.className = "p-4 rounded-xl bg-surface-glass-medium border border-border-glass-hairline/60 flex flex-col gap-3";
+
+          let sentHtml = item.sentence;
+          const sentBlankRegex = /(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
+          const slotId = `sent-slot-${sIdx}-${iIdx}`;
+
+          if (sentBlankRegex.test(sentHtml)) {
+            sentHtml = sentHtml.replace(sentBlankRegex, `<span class="interactive-slot" id="${slotId}" data-word="${group.word}">_ _ _ _</span>`);
+          } else {
+            const wRegex = new RegExp(`\\b${group.word}\\b`, "i");
+            sentHtml = sentHtml.replace(wRegex, `<span class="interactive-slot" id="${slotId}" data-word="${group.word}">_ _ _ _</span>`);
+          }
+
+          itemBox.innerHTML = `
+            <div class="text-sm text-on-surface font-medium leading-relaxed">
+              ${iIdx + 1}. ${sentHtml}
+            </div>
+            <div class="flex flex-wrap items-center gap-2 pt-1" id="sent-opts-${sIdx}-${iIdx}">
+              <span class="text-xs text-text-dim mr-1">選項:</span>
+            </div>
+            <!-- 提交後展示的繁體中文語境解析 -->
+            <div id="sent-inline-exp-${sIdx}-${iIdx}" class="hidden mt-2 p-3 rounded-lg bg-surface-glass-subtle border border-border-glass-hairline/60 flex flex-col gap-1 text-xs">
+              <div class="flex items-center gap-1.5 font-semibold text-primary">
+                <span class="material-symbols-outlined text-[14px] text-feedback-success">lightbulb</span>
+                <span>句子語意解析</span>
+              </div>
+              <p class="text-on-surface-variant leading-relaxed">
+                ${item.explanation || '結合本句具體前後文情境，深入剖析單字之精確搭配與語意邏輯。'}
+              </p>
+            </div>
+          `;
+
+          const optContainer = itemBox.querySelector(`#sent-opts-${sIdx}-${iIdx}`);
+          (item.options || []).forEach(opt => {
+            const optBtn = document.createElement("button");
+            optBtn.type = "button";
+            optBtn.className = "px-3 py-1 rounded-full text-xs font-semibold bg-surface-glass-subtle border border-border-glass-hairline hover:bg-surface-glass-elevated transition-all";
+            optBtn.textContent = opt;
+            optBtn.addEventListener("click", () => {
+              if (submittedTabs.sentence) return;
+              sentenceAnswers[sIdx][iIdx] = opt;
+              const slot = document.getElementById(slotId);
+              if (slot) {
+                slot.textContent = opt;
+                slot.classList.add("filled");
+              }
+              optContainer.querySelectorAll("button").forEach(b => b.classList.remove("bg-white", "text-black"));
+              optBtn.classList.add("bg-white", "text-black");
+              showToast(`句子填入: ${opt}`);
+            });
+            optContainer.appendChild(optBtn);
+          });
+
+          card.appendChild(itemBox);
+        });
+
+        secSentence.appendChild(card);
+      });
+    }
+
+    // Build Spelling (First and last letter cues, no options)
+    function buildSpelling() {
+      secSpelling.innerHTML = "";
+      if (!exerciseData || !exerciseData.sentences || exerciseData.sentences.length === 0) {
+        secSpelling.innerHTML = '<div class="p-8 text-center text-text-dim text-sm">無造句題目</div>';
+        return;
+      }
+
+      exerciseData.sentences.forEach((group, sIdx) => {
+        spellingAnswers[sIdx] = {};
+        const card = document.createElement("div");
+        card.className = "rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 flex flex-col gap-4 shadow-xl";
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-border-glass-hairline/60">
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-text-dim uppercase tracking-wider font-semibold">首尾字母填空:</span>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 border border-white/20 text-primary">${group.word}</span>
+            </div>
+            <span class="text-xs text-text-dim">不提供選項，請自行拼出單字</span>
+          </div>
+        `;
+
+        (group.items || []).forEach((item, iIdx) => {
+          spellingAnswers[sIdx][iIdx] = "";
+          const itemBox = document.createElement("div");
+          itemBox.className = "p-4 rounded-xl bg-surface-glass-medium border border-border-glass-hairline/60 flex flex-col gap-2";
+
+          const w = group.word.trim();
+          let firstLetter = w[0] || "";
+          let lastLetter = w.length > 1 ? w[w.length - 1] : "";
+          const inputId = `spell-input-${sIdx}-${iIdx}`;
+
+          let sentHtml = item.sentence;
+          const sentBlankRegex = /(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
+          const cueHtml = `
+            <span class="inline-flex items-center gap-1 mx-1.5 px-3 py-1 rounded-full bg-surface-glass-elevated border border-border-glass-active">
+              <span class="text-feedback-success font-bold text-sm font-mono">${firstLetter}</span>
+              <input type="text" id="${inputId}" class="spelling-input-field w-24 text-xs font-mono" placeholder="請拼字" autocomplete="off" />
+              <span class="text-feedback-success font-bold text-sm font-mono">${lastLetter}</span>
+            </span>
+          `;
+
+          if (sentBlankRegex.test(sentHtml)) {
+            sentHtml = sentHtml.replace(sentBlankRegex, cueHtml);
+          } else {
+            const wRegex = new RegExp(`\\b${w}\\b`, "i");
+            sentHtml = sentHtml.replace(wRegex, cueHtml);
+          }
+
+          itemBox.innerHTML = `
+            <div class="text-sm text-on-surface font-medium leading-relaxed">
+              ${iIdx + 1}. ${sentHtml}
+            </div>
+          `;
+
+          card.appendChild(itemBox);
+
+          setTimeout(() => {
+            const inputEl = document.getElementById(inputId);
+            if (inputEl) {
+              inputEl.addEventListener("input", (e) => {
+                if (submittedTabs.spelling) return;
+                const val = e.target.value.trim();
+                let fullAttempt = val;
+                if (val.length > 0 && !val.toLowerCase().startsWith(firstLetter.toLowerCase())) {
+                  fullAttempt = firstLetter + val;
+                }
+                if (val.length > 0 && !fullAttempt.toLowerCase().endsWith(lastLetter.toLowerCase())) {
+                  fullAttempt = fullAttempt + lastLetter;
+                }
+                spellingAnswers[sIdx][iIdx] = val;
+              });
+            }
+          }, 0);
+        });
+
+        secSpelling.appendChild(card);
+      });
+    }
+
+    // Dynamic Total Questions Computation Helper
+    function computeTotalQuestions(data) {
+      if (!data) return 0;
+      let total = 0;
+      (data.articles || []).forEach(art => {
+        total += (art.blanks || []).length;
+      });
+      (data.sentences || []).forEach(group => {
+        const itemCount = (group.items || []).length;
+        total += itemCount; // Tab 2: Sentences Multiple Choice
+        total += itemCount; // Tab 3: Sentences First/Last Letter Spelling
+      });
+      return total;
+    }
+
+    // Initialize
+    if (exerciseData) {
+      renderLexiconDock();
+      buildArticles();
+      buildSentences();
+      buildSpelling();
+
+      const hasArticles = (exerciseData.articles || []).length > 0;
+      const hasSentences = (exerciseData.sentences || []).length > 0;
+      const selectedTypes = exerciseData.selectedTypes || ['article', 'sentence', 'spelling'];
+
+      if (!hasArticles || !selectedTypes.includes('article')) {
+        tabBtnArticle.classList.add('hidden');
+      }
+      if (!hasSentences || !selectedTypes.includes('sentence')) {
+        tabBtnSentence.classList.add('hidden');
+      }
+      if (!hasSentences || !selectedTypes.includes('spelling')) {
+        tabBtnSpelling.classList.add('hidden');
+      }
+
+      // Switch to first available tab
+      if (hasArticles && selectedTypes.includes('article')) {
+        switchTab("article", tabBtnArticle, secArticle, false);
+      } else if (hasSentences && selectedTypes.includes('sentence')) {
+        switchTab("sentence", tabBtnSentence, secSentence, false);
+      } else if (hasSentences && selectedTypes.includes('spelling')) {
+        switchTab("spelling", tabBtnSpelling, secSpelling, true);
+      }
+
+      const initialTotalQuestions = computeTotalQuestions(exerciseData);
+      const statusText = document.getElementById("completion-status-text");
+      const scoreRatioEl = document.getElementById("res-score-ratio");
+      if (statusText) {
+        statusText.textContent = `Evaluation Status: Ready (${initialTotalQuestions} Items Total)`;
+      }
+      if (scoreRatioEl) {
+        scoreRatioEl.textContent = `0 / ${initialTotalQuestions}`;
+      }
+    } else {
+      secArticle.innerHTML = `
+        <div class="p-12 text-center rounded-2xl bg-surface-glass-subtle border border-border-glass-hairline">
+          <p class="text-base text-on-surface-variant mb-4">目前尚無練習題目，請先前往出題頁面生成題目！</p>
+          <a href="generate.html" class="px-6 py-2.5 rounded-full text-xs font-bold bg-primary text-black hover:bg-neutral-200 transition-colors">前往出題頁面</a>
+        </div>
+      `;
+    }
+
+    // Track scores and errors across tabs
+    let tabScores = {
+      article: { correct: 0, total: 0, graded: false },
+      sentence: { correct: 0, total: 0, graded: false },
+      spelling: { correct: 0, total: 0, graded: false }
+    };
+    const allIncorrectWords = new Set();
+
+    function updateOverallResultsSummary(isFinal = false) {
+      let totalCorrect = 0;
+      let totalItems = 0;
+      Object.keys(tabScores).forEach(k => {
+        if (tabScores[k].graded) {
+          totalCorrect += tabScores[k].correct;
+          totalItems += tabScores[k].total;
+        }
+      });
+
+      const totalExerciseQuestions = computeTotalQuestions(exerciseData) || totalItems;
+      const scorePct = totalItems > 0 ? Math.round((totalCorrect / totalItems) * 100) : 0;
+
+      const scoreRatioEl = document.getElementById("res-score-ratio");
+      const scorePctEl = document.getElementById("res-score-pct");
+      const scoreBarEl = document.getElementById("res-score-bar");
+      const feedbackEl = document.getElementById("res-feedback-text");
+      const statusText = document.getElementById("completion-status-text");
+
+      if (scoreRatioEl) scoreRatioEl.textContent = `${totalCorrect} / ${totalItems}`;
+      if (scorePctEl) scorePctEl.textContent = `${scorePct}% Accuracy`;
+      if (scoreBarEl) scoreBarEl.style.width = `${Math.min(Math.max(scorePct, 0), 100)}%`;
+
+      if (feedbackEl) {
+        if (!isFinal) {
+          feedbackEl.innerHTML = `已完成當前頁面核對！目前已評分 ${totalItems} 題（答對 ${totalCorrect} 題）。您可切換上方題型分頁繼續完成其餘題目。`;
+        } else {
+          if (scorePct >= 90) {
+            feedbackEl.innerHTML = "表現卓越！完美掌握了上下文語意與搭配詞結構。";
+          } else if (scorePct >= 70) {
+            feedbackEl.innerHTML = `掌握度良好！已標記 ${allIncorrectWords.size} 個生疏單字納入下次自適應加強複習。`;
+          } else {
+            feedbackEl.innerHTML = `建議多加強語意與拼寫，已將錯題單字加入高優先度間隔複習清單！`;
+          }
+        }
+      }
+
+      if (statusText) {
+        statusText.textContent = isFinal
+          ? `Status: All Done (${totalCorrect}/${totalItems})`
+          : `Status: Graded ${totalItems}/${totalExerciseQuestions}`;
+      }
+    }
+
+    // Submit & Grade (Only current tab answers)
+    document.getElementById("btn-submit")?.addEventListener("click", async () => {
+      if (submittedTabs[currentTab]) {
+        showToast("當前分頁已經核對過答案囉！若有其他題型請切換上方分頁作答。");
+        return;
+      }
+
+      submittedTabs[currentTab] = true;
+      let pageCorrect = 0;
+      let pageTotal = 0;
+
+      // ── Grade Only Current Tab ──
+      if (currentTab === "article") {
+        (exerciseData.articles || []).forEach((art, aIdx) => {
+          (art.blanks || []).forEach((b, bIdx) => {
+            pageTotal++;
+            const slot = document.getElementById(`art-slot-${aIdx}-${bIdx}`);
+            const userAns = (articleAnswers[aIdx] && articleAnswers[aIdx][bIdx]) || "";
+            const target = (b.word || "").trim();
+
+            if (userAns.toLowerCase() === target.toLowerCase()) {
+              pageCorrect++;
+              if (slot) slot.classList.add("correct-answer");
+            } else {
+              allIncorrectWords.add(target);
+              if (slot) {
+                slot.classList.add("wrong-answer");
+                const ansBadge = document.createElement("span");
+                ansBadge.className = "inline-flex items-center gap-1 ml-1 px-2.5 py-0.5 rounded-full bg-feedback-success-glass text-feedback-success text-xs font-semibold";
+                ansBadge.innerHTML = `<span class="material-symbols-outlined text-[13px]">check</span>${target} ${b.chinese ? '[' + b.chinese + ']' : ''}`;
+                slot.parentNode.insertBefore(ansBadge, slot.nextSibling);
+              }
+            }
+          });
+
+          // Reveal inline explanations inside each passage
+          const expBox = document.getElementById(`art-inline-exp-${aIdx}`);
+          if (expBox) {
+            let blanksHtml = "";
+            (art.blanks || []).forEach((b, bIdx) => {
+              const w = (b.word || "").trim();
+              const isWrong = allIncorrectWords.has(w);
+              const trans = b.translation ? `「${b.translation}」` : '';
+              const expText = b.explanation || art.explanation || '';
+              
+              blanksHtml += `
+                <div class="p-3 rounded-lg bg-surface-glass-subtle border border-border-glass-hairline/60 flex flex-col gap-1">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold font-mono ${isWrong ? 'bg-feedback-error-glass text-feedback-error' : 'bg-feedback-success-glass text-feedback-success'}">
+                      空格 ${bIdx + 1}: ${w} ${trans}
+                    </span>
+                    <span class="text-[11px] text-text-dim">語境釋義</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant leading-relaxed">
+                    ${expText}
+                  </p>
+                </div>
+              `;
+            });
+
+            expBox.innerHTML = `
+              <div class="flex items-center gap-2 pb-1 text-xs font-semibold text-primary">
+                <span class="material-symbols-outlined text-[15px] text-feedback-success">psychology</span>
+                <span>文章語境與單字脈絡解析 (Contextual Insights)</span>
+              </div>
+              <div class="space-y-2">
+                ${blanksHtml}
+              </div>
+            `;
+            expBox.classList.remove("hidden");
+          }
+        });
+
+        tabScores.article = { correct: pageCorrect, total: pageTotal, graded: true };
+      } else if (currentTab === "sentence") {
+        (exerciseData.sentences || []).forEach((group, sIdx) => {
+          (group.items || []).forEach((item, iIdx) => {
+            pageTotal++;
+            const slot = document.getElementById(`sent-slot-${sIdx}-${iIdx}`);
+            const userAns = (sentenceAnswers[sIdx] && sentenceAnswers[sIdx][iIdx]) || "";
+            const target = group.word.trim();
+
+            if (userAns.toLowerCase() === target.toLowerCase()) {
+              pageCorrect++;
+              if (slot) slot.classList.add("correct-answer");
+            } else {
+              allIncorrectWords.add(target);
+              if (slot) {
+                slot.classList.add("wrong-answer");
+                const ansBadge = document.createElement("span");
+                ansBadge.className = "inline-flex items-center gap-1 ml-1 px-2.5 py-0.5 rounded-full bg-feedback-success-glass text-feedback-success text-xs font-semibold";
+                ansBadge.innerHTML = `<span class="material-symbols-outlined text-[13px]">check</span>${target}`;
+                slot.parentNode.insertBefore(ansBadge, slot.nextSibling);
+              }
+            }
+
+            // Reveal sentence inline explanation
+            const sentExpEl = document.getElementById(`sent-inline-exp-${sIdx}-${iIdx}`);
+            if (sentExpEl) sentExpEl.classList.remove("hidden");
+          });
+        });
+
+        tabScores.sentence = { correct: pageCorrect, total: pageTotal, graded: true };
+      } else if (currentTab === "spelling") {
+        (exerciseData.sentences || []).forEach((group, sIdx) => {
+          (group.items || []).forEach((item, iIdx) => {
+            pageTotal++;
+            const inputEl = document.getElementById(`spell-input-${sIdx}-${iIdx}`);
+            const rawInput = (spellingAnswers[sIdx] && spellingAnswers[sIdx][iIdx]) || "";
+            const target = group.word.trim();
+            
+            let userAttempt = rawInput.toLowerCase();
+            const firstLetter = target[0].toLowerCase();
+            const lastLetter = target[target.length - 1].toLowerCase();
+
+            if (!userAttempt.startsWith(firstLetter)) userAttempt = firstLetter + userAttempt;
+            if (!userAttempt.endsWith(lastLetter)) userAttempt = userAttempt + lastLetter;
+
+            if (userAttempt === target.toLowerCase() || rawInput.toLowerCase() === target.toLowerCase()) {
+              pageCorrect++;
+              if (inputEl) inputEl.style.borderColor = "#10b981";
+            } else {
+              allIncorrectWords.add(target);
+              if (inputEl) {
+                inputEl.style.borderColor = "#ef4444";
+                const ansBadge = document.createElement("span");
+                ansBadge.className = "text-feedback-success text-xs font-bold ml-2";
+                ansBadge.textContent = `正解: ${target}`;
+                inputEl.parentNode.appendChild(ansBadge);
+              }
+            }
+          });
+        });
+
+        tabScores.spelling = { correct: pageCorrect, total: pageTotal, graded: true };
+      }
+
+      // Update submit button visual state for this tab
+      updateSubmitButtonState();
+
+      // Check if all active generated tabs are submitted
+      const activeTabs = [];
+      const hasArticles = (exerciseData.articles || []).length > 0;
+      const hasSentences = (exerciseData.sentences || []).length > 0;
+      const selectedTypes = exerciseData.selectedTypes || ['article', 'sentence', 'spelling'];
+      if (hasArticles && selectedTypes.includes('article')) activeTabs.push('article');
+      if (hasSentences && selectedTypes.includes('sentence')) activeTabs.push('sentence');
+      if (hasSentences && selectedTypes.includes('spelling')) activeTabs.push('spelling');
+
+      const allTabsFinished = activeTabs.every(t => submittedTabs[t]);
+      submitted = allTabsFinished;
+
+      // Update Summary & Diagnosis modal block (rendered quietly at bottom without jumping)
+      updateOverallResultsSummary(allTabsFinished);
+      const resSection = document.getElementById("results-container");
+      if (resSection) {
+        resSection.classList.remove("hidden");
+      }
+
+      showToast(`【${currentTab === 'article' ? '文章填空' : currentTab === 'sentence' ? '句子選擇' : '造句手寫'}】對答案完成！得分：${pageCorrect} / ${pageTotal}`);
+
+      // Auto-save to Firestore once all generated tabs are graded (or save incremental record)
+      if (allTabsFinished) {
+        try {
+          let grandCorrect = 0;
+          let grandTotal = 0;
+          Object.keys(tabScores).forEach(k => {
+            if (tabScores[k].graded) {
+              grandCorrect += tabScores[k].correct;
+              grandTotal += tabScores[k].total;
+            }
+          });
+          const finalPct = grandTotal > 0 ? Math.round((grandCorrect / grandTotal) * 100) : 0;
+
+          await saveExercise({
+            words: exerciseData.words,
+            lang: exerciseData.lang || 'en',
+            difficulty: exerciseData.difficulty || 'middle',
+            articles: exerciseData.articles,
+            sentences: exerciseData.sentences,
+            score: {
+              correct: grandCorrect,
+              total: grandTotal,
+              pct: finalPct
+            },
+            incorrectWords: Array.from(allIncorrectWords),
+            durationSeconds: totalSeconds
+          });
+          showToast("全部題型均已完成對答案，已自動儲存作答紀錄至雲端！");
+        } catch (saveErr) {
+          console.error("Auto-save error:", saveErr);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
