@@ -1,147 +1,307 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>單字填空練習 - 登入</title>
+  <title>VocabFill — Precision Language Mastery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Zero-Scroll Centered Auth Layout ── */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .auth-viewport {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+      box-sizing: border-box;
+      position: relative;
+      background: radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 390px;
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.7);
+      box-sizing: border-box;
+      text-align: center;
+      transition: all 0.25s ease;
+    }
+
+    .auth-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: #ffffff;
+      color: #000000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-google-primary {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: #ffffff;
+      color: #000000;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 18px rgba(255, 255, 255, 0.15);
+      user-select: none;
+    }
+
+    .btn-google-primary:hover {
+      background: #ececec;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.28);
+    }
+
+    .btn-google-primary:active {
+      transform: translateY(0);
+    }
+
+    .divider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .auth-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 11px 14px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      margin-bottom: 12px;
+    }
+
+    .auth-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #ffffff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+    }
+
+    .auth-input::placeholder {
+      color: #666666;
+    }
+
+    .btn-submit-email {
+      width: 100%;
+      padding: 11px 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit-email:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: #ffffff;
+    }
+
+    .btn-submit-email:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .switch-mode-btn {
+      background: none;
+      border: none;
+      color: #999999;
+      font-size: 0.82rem;
+      margin-top: 14px;
+      cursor: pointer;
+      transition: color 0.2s;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .switch-mode-btn:hover {
+      color: #ffffff;
+    }
+
+    .guest-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 20px;
+      color: #737373;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .guest-link:hover {
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body>
-  <!-- Stars background -->
-  <div class="stars-bg" id="stars-bg"></div>
 
-  <!-- Navigation Bar -->
-  <nav>
-    <a href="index.html" class="nav-brand">✨ VocabFill</a>
-    <div class="nav-links">
-      <a href="generate.html">開始出題</a>
-      <a href="practice.html">練習區</a>
-      <a href="history.html">歷史紀錄</a>
-    </div>
-  </nav>
+  <div class="auth-viewport">
 
-  <div class="container" style="padding-top: 0;">
-    <div class="hero" style="padding-top: 8px; padding-bottom: 20px;">
-      <h1 class="hero-title" style="margin-top: 0; margin-bottom: 8px;">單字填空練習</h1>
-      <p class="hero-subtitle" style="margin-bottom: 16px;">輸入單字，AI 幫你生成文章與句子填空題<br>讓背單字變得有趣又有效率！</p>
+    <!-- Auth Card -->
+    <div class="auth-card">
 
-      <!-- Quick Action Buttons -->
-      <div style="display:flex; justify-content:center; gap:12px; margin-bottom: 24px; flex-wrap: wrap;">
-        <a href="generate.html" class="btn btn-primary" style="padding: 10px 24px; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-          🚀 直接體驗出題 (跳過登入)
-        </a>
-        <a href="history.html" class="btn btn-secondary" style="padding: 10px 20px; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-          📖 瀏覽練習紀錄
-        </a>
-      </div>
-
+      <!-- UNLOGGED STATE: Authentication form -->
       <div id="login-section">
-        <div class="card" style="max-width: 380px; margin: 0 auto; text-align: left;">
-          <div class="tabs" style="margin-bottom: 16px;">
-            <button class="tab-btn active" id="tab-login-btn" type="button">登入</button>
-            <button class="tab-btn" id="tab-register-btn" type="button">註冊帳號</button>
-          </div>
+        <div class="brand-icon">
+          <span class="material-symbols-outlined text-[24px]">edit_square</span>
+        </div>
+        <h1 style="font-size: 1.5rem; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.02em;">VocabFill</h1>
+        <p style="font-size: 0.85rem; color: #888888; margin: 0 0 24px;">智慧克漏字與檢定題型生成器</p>
 
-          <form id="auth-form" onsubmit="return false;">
-            <div class="form-group">
-              <label class="form-label" for="auth-email">電子信箱 (Email)</label>
-              <input type="email" id="auth-email" class="form-input" placeholder="student@example.com" required autocomplete="email" />
-            </div>
+        <!-- Primary Auth Method: Google Login -->
+        <button type="button" class="btn-google-primary" id="google-login-btn">
+          <img src="https://www.google.com/favicon.ico" alt="Google" style="width:17px; height:17px;" />
+          <span>Continue with Google</span>
+        </button>
 
-            <div class="form-group">
-              <label class="form-label" for="auth-password">密碼 (Password)</label>
-              <input type="password" id="auth-password" class="form-input" placeholder="至少 6 位字元" required autocomplete="current-password" />
-            </div>
+        <!-- Divider -->
+        <div class="divider-row">
+          <div class="divider-line"></div>
+          <span style="font-size: 0.75rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em;">或使用電子信箱</span>
+          <div class="divider-line"></div>
+        </div>
 
-            <button type="submit" class="btn btn-primary" id="email-auth-btn" style="width:100%; justify-content:center; margin-top:8px;">
-              登入
-            </button>
-          </form>
+        <!-- Secondary Auth Method: Email Form -->
+        <form id="auth-form" onsubmit="return false;" style="text-align: left;">
+          <input type="email" id="auth-email" class="auth-input" placeholder="電子信箱 (name@example.com)" required autocomplete="email" />
+          <input type="password" id="auth-password" class="auth-input" placeholder="密碼 (至少 6 位字元)" required autocomplete="current-password" />
+          <button type="submit" class="btn-submit-email" id="email-auth-btn">
+            登入
+          </button>
+        </form>
 
-          <div style="display:flex; align-items:center; gap:10px; margin: 18px 0;">
-            <div style="flex:1; height:1px; background:var(--border-color);"></div>
-            <span style="font-size:0.8rem; color:var(--text-muted);">或</span>
-            <div style="flex:1; height:1px; background:var(--border-color);"></div>
-          </div>
-
-          <button type="button" class="btn btn-google" id="google-login-btn" style="width:100%; justify-content:center;">
-            <img src="https://www.google.com/favicon.ico" alt="Google" style="width:18px;height:18px;" />
-            使用 Google 帳號快速登入
+        <div style="text-align: center;">
+          <button type="button" class="switch-mode-btn" id="toggle-auth-mode-btn">
+            尚未註冊？建立帳號
           </button>
         </div>
-        <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.85rem;">
-          登入後即可在 Firestore 雲端儲存練習紀錄
-        </p>
+
+        <!-- Guest Bypass Route -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 22px; padding-top: 14px;">
+          <a href="generate.html" class="guest-link">
+            <span>暫不登入，以訪客身份體驗出題</span>
+            <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+          </a>
+        </div>
       </div>
 
-      <div id="logged-section" style="display:none;">
-        <div class="card" style="max-width: 360px; margin: 0 auto 20px; text-align: left;">
-          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-            <img id="user-avatar" src="" alt="頭像" style="width:44px;height:44px;border-radius:50%;border:2px solid var(--accent-primary);display:none;" />
-            <div id="user-avatar-placeholder" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.2rem;color:white;">👤</div>
-            <div>
-              <div id="user-name" style="font-weight:600;"></div>
-              <div id="user-email" style="font-size:0.82rem;color:var(--text-muted);"></div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;">
-            <a href="generate.html" class="btn btn-primary" style="flex:1;justify-content:center;">開始出題</a>
-            <a href="history.html" class="btn btn-secondary" style="flex:1;justify-content:center;">歷史紀錄</a>
+      <!-- LOGGED-IN STATE: User status and Launch CTA -->
+      <div id="logged-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 24px;">
+          <img id="user-avatar" src="" alt="頭像" style="width: 58px; height: 58px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); display: none; box-shadow: 0 0 16px rgba(255,255,255,0.15);" />
+          <div id="user-avatar-placeholder" style="width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #ffffff;">👤</div>
+          <div>
+            <div id="user-name" style="font-size: 1.15rem; font-weight: 700; color: #ffffff;"></div>
+            <div id="user-email" style="font-size: 0.82rem; color: #888888; margin-top: 2px;"></div>
           </div>
         </div>
-        <button class="btn btn-secondary" id="logout-btn-index" style="font-size:0.85rem;">登出</button>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="generate.html" class="btn-google-primary" style="text-decoration: none;">
+            <span class="material-symbols-outlined text-[19px]">bolt</span>
+            <span>前往出題工作台 (Launch)</span>
+          </a>
+          <a href="history.html" class="btn-submit-email" style="text-decoration: none; text-align: center;">
+            瀏覽學習歷史紀錄
+          </a>
+        </div>
+
+        <button type="button" class="switch-mode-btn" id="logout-btn-index" style="margin-top: 20px; color: #737373;">
+          登出目前帳號
+        </button>
       </div>
+
     </div>
 
-    <!-- Features -->
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-top: 20px;">
-      <div class="card" style="text-align:center;">
-        <div style="font-weight:600; font-size:1.1rem; margin-bottom:6px;">文章填空</div>
-        <div style="font-size:0.85rem; color:var(--text-muted);">AI 生成包含目標單字的完整文章，挖空考驗記憶</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div style="font-weight:600; font-size:1.1rem; margin-bottom:6px;">句子填空</div>
-        <div style="font-size:0.85rem; color:var(--text-muted);">每個單字 3 個例句，點擊選項完成填空</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div style="font-weight:600; font-size:1.1rem; margin-bottom:6px;">雲端儲存</div>
-        <div style="font-size:0.85rem; color:var(--text-muted);">練習紀錄自動儲存至 Firestore，隨時複習</div>
-      </div>
+    <!-- Minimal footer branding note -->
+    <div style="position: absolute; bottom: 18px; color: #555555; font-size: 0.75rem; letter-spacing: 0.02em;">
+      VocabFill Precision Platform
     </div>
+
   </div>
 
-  <!-- Toast -->
+  <!-- Toast Notification Container -->
   <div class="toast" id="toast"></div>
 
   <script type="module">
     import { loginWithGoogle, loginWithEmail, registerWithEmail, onAuthChange, logout } from "./firebase-config.js";
-    import { initStars, showToast } from "./app.js";
-
-    initStars();
+    import { showToast } from "./app.js";
 
     let authMode = "login"; // "login" | "register"
-    const tabLoginBtn    = document.getElementById("tab-login-btn");
-    const tabRegisterBtn = document.getElementById("tab-register-btn");
-    const emailAuthBtn   = document.getElementById("email-auth-btn");
-    const authForm       = document.getElementById("auth-form");
-    const emailInput     = document.getElementById("auth-email");
-    const passwordInput  = document.getElementById("auth-password");
+    const toggleAuthModeBtn = document.getElementById("toggle-auth-mode-btn");
+    const emailAuthBtn      = document.getElementById("email-auth-btn");
+    const authForm          = document.getElementById("auth-form");
+    const emailInput        = document.getElementById("auth-email");
+    const passwordInput     = document.getElementById("auth-password");
 
-    tabLoginBtn.addEventListener("click", () => {
-      authMode = "login";
-      tabLoginBtn.classList.add("active");
-      tabRegisterBtn.classList.remove("active");
-      emailAuthBtn.textContent = "登入";
+    // 切換 登入 / 註冊 模式
+    toggleAuthModeBtn?.addEventListener("click", () => {
+      if (authMode === "login") {
+        authMode = "register";
+        emailAuthBtn.textContent = "註冊帳號並登入";
+        toggleAuthModeBtn.textContent = "已有帳號？返回登入";
+      } else {
+        authMode = "login";
+        emailAuthBtn.textContent = "登入";
+        toggleAuthModeBtn.textContent = "尚未註冊？建立帳號";
+      }
     });
 
-    tabRegisterBtn.addEventListener("click", () => {
-      authMode = "register";
-      tabRegisterBtn.classList.add("active");
-      tabLoginBtn.classList.remove("active");
-      emailAuthBtn.textContent = "註冊並登入";
-    });
-
-    authForm.addEventListener("submit", async (e) => {
+    // Email / 密碼 表單送出
+    authForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = emailInput.value.trim();
       const password = passwordInput.value;
@@ -172,36 +332,50 @@
       }
     });
 
+    // 監聽 Firebase 登入狀態
     onAuthChange(user => {
+      const loginSection = document.getElementById("login-section");
+      const loggedSection = document.getElementById("logged-section");
       if (user) {
-        document.getElementById("login-section").style.display = "none";
-        document.getElementById("logged-section").style.display = "block";
-        document.getElementById("user-name").textContent  = user.displayName || user.email.split("@")[0];
-        document.getElementById("user-email").textContent = user.email;
+        if (loginSection) loginSection.style.display = "none";
+        if (loggedSection) loggedSection.style.display = "block";
+        
+        const userNameEl = document.getElementById("user-name");
+        const userEmailEl = document.getElementById("user-email");
+        if (userNameEl) userNameEl.textContent = user.displayName || user.email.split("@")[0];
+        if (userEmailEl) userEmailEl.textContent = user.email;
+
         const avatar = document.getElementById("user-avatar");
         const placeholder = document.getElementById("user-avatar-placeholder");
         if (user.photoURL) {
-          avatar.src = user.photoURL;
-          avatar.style.display = "block";
-          placeholder.style.display = "none";
+          if (avatar) {
+            avatar.src = user.photoURL;
+            avatar.style.display = "block";
+          }
+          if (placeholder) placeholder.style.display = "none";
         } else {
-          avatar.style.display = "none";
-          placeholder.style.display = "flex";
+          if (avatar) avatar.style.display = "none";
+          if (placeholder) placeholder.style.display = "flex";
         }
       } else {
-        document.getElementById("login-section").style.display = "block";
-        document.getElementById("logged-section").style.display = "none";
+        if (loginSection) loginSection.style.display = "block";
+        if (loggedSection) loggedSection.style.display = "none";
       }
     });
 
-    document.getElementById("google-login-btn").addEventListener("click", async () => {
-      try { await loginWithGoogle(); }
-      catch (e) { showToast("登入失敗：" + e.message, "error"); }
+    // Google 第三方一鍵登入
+    document.getElementById("google-login-btn")?.addEventListener("click", async () => {
+      try {
+        await loginWithGoogle();
+      } catch (e) {
+        showToast("登入失敗：" + e.message, "error");
+      }
     });
 
-    document.getElementById("logout-btn-index").addEventListener("click", async () => {
+    // 登出
+    document.getElementById("logout-btn-index")?.addEventListener("click", async () => {
       await logout();
-      showToast("已登出", "success");
+      showToast("已成功登出", "success");
     });
   </script>
 </body>
