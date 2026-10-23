@@ -34,18 +34,37 @@ async function callGemini(prompt) {
 
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 8192,
-        responseMimeType: "application/json"
-      }
-    })
-  });
+  // 設置 40 秒超時控制器，防止請求無限卡死
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 40000);
+
+  let res;
+  try {
+    res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.5,
+          maxOutputTokens: 8192,
+          responseMimeType: "application/json",
+          thinkingConfig: {
+            thinkingLevel: "low" // 降低思考延遲，將回應速度提升 3~5 倍
+          }
+        }
+      })
+    });
+  } catch (fetchErr) {
+    clearTimeout(timeoutId);
+    if (fetchErr.name === "AbortError") {
+      throw new Error("AI 出題回應超時（超過 40 秒），請減少單字數量或稍候再試。");
+    }
+    throw fetchErr;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
