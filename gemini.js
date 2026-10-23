@@ -2,7 +2,7 @@
 // GEMINI API - 生成填空題邏輯
 // =============================================
 
-const GEMINI_MODEL = "gemini-2.5-flash"; // 支援最新規格與高抗限流能力
+const GEMINI_MODEL = "gemini-3.8-flash"; // 升級至官方最新推薦標準模型
 
 // 金鑰管理工具函式 (儲存於瀏覽器 localStorage)
 export function getApiKey() {
