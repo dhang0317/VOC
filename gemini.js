@@ -34,9 +34,9 @@ async function callGemini(prompt) {
 
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
-  // 設置 40 秒超時控制器，防止請求無限卡死
+  // 設置 60 秒超時控制器，防止請求無限卡死
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 40000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   let res;
   try {
@@ -47,11 +47,11 @@ async function callGemini(prompt) {
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.5,
+          temperature: 0.4,
           maxOutputTokens: 8192,
           responseMimeType: "application/json",
           thinkingConfig: {
-            thinkingLevel: "low" // 降低思考延遲，將回應速度提升 3~5 倍
+            thinkingLevel: "low" // 保持快速回應，避免深度思考拖慢出題
           }
         }
       })
@@ -59,7 +59,7 @@ async function callGemini(prompt) {
   } catch (fetchErr) {
     clearTimeout(timeoutId);
     if (fetchErr.name === "AbortError") {
-      throw new Error("AI 出題回應超時（超過 40 秒），請減少單字數量或稍候再試。");
+      throw new Error("AI 出題回應超時（超過 60 秒），請減少單字數量或稍候再試。");
     }
     throw fetchErr;
   } finally {
@@ -77,10 +77,27 @@ async function callGemini(prompt) {
 
   const data = await res.json();
   const candidate = data.candidates?.[0];
-  const text = candidate?.content?.parts?.[0]?.text;
+  
+  // ── 支援 Gemini 3.8 思考模型多段 Parts 解析 ──
+  // 在 3.8 模型中，parts[0] 可能是思考過程 (thought: true)，實際回答文本在非 thought 的 part 中
+  let text = "";
+  const parts = candidate?.content?.parts || [];
+  for (const part of parts) {
+    if (part.text && !part.thought) {
+      text += part.text;
+    }
+  }
+
+  // Fallback 相容舊格式或未標記 thought 的情形
+  if (!text.trim() && parts.length > 0) {
+    const nonThought = parts.filter(p => !p.thought);
+    text = (nonThought.length > 0 ? nonThought : parts).map(p => p.text || "").join("").trim();
+  }
+
   if (!text) {
     if (candidate?.finishReason === "SAFETY") throw new Error("內容被安全過濾器攔截，請嘗試更換單字");
-    throw new Error("AI 沒有回傳內容，請再試一次");
+    if (candidate?.finishReason === "MAX_TOKENS") throw new Error("題目內容過長超出限制，請減少選取單字數量");
+    throw new Error("AI 沒有回傳有效內容，請再試一次");
   }
   return text;
 }
