@@ -465,10 +465,13 @@ export function initTextSelectionTranslator() {
     }
   });
 
-  // 監聽文字選取
-  document.addEventListener("mouseup", (e) => {
-    if (tooltip.contains(e.target)) return;
+  document.addEventListener("touchstart", (e) => {
+    if (!tooltip.contains(e.target)) {
+      hideTooltip();
+    }
+  }, { passive: true });
 
+  const handleSelection = () => {
     setTimeout(() => {
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed) return;
@@ -549,7 +552,17 @@ export function initTextSelectionTranslator() {
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
     }, 60);
+  };
+
+  document.addEventListener("mouseup", (e) => {
+    if (tooltip.contains(e.target)) return;
+    handleSelection();
   });
+
+  document.addEventListener("touchend", (e) => {
+    if (tooltip.contains(e.target)) return;
+    handleSelection();
+  }, { passive: true });
 
   // 收錄至單字庫按鈕點擊
   addBtn?.addEventListener("click", (e) => {
