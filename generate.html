@@ -882,14 +882,29 @@
         }
       }
 
+      const selectedTypeList = Array.from(selectedTypes);
+      const hasArticle = selectedTypeList.includes('article');
+      const hasSentences = selectedTypeList.includes('sentence') || selectedTypeList.includes('spelling');
+
+      // 若同時選了文章與句子題型，先極速生成文章題型並立馬跳轉，句子題型在 practice.html 背景非同步補齊
+      const phasedGeneration = hasArticle && hasSentences;
+      const initialTypes = phasedGeneration ? ['article'] : selectedTypeList;
+
       let exerciseData = await generateExercise(wordsToUse, currentLang, 'middle', {
         wordsPerArticle: currentWordsPerArticle,
         numArticles: currentNumArticles,
         historySummary,
-        selectedTypes: Array.from(selectedTypes)
+        selectedTypes: initialTypes
       });
 
       exerciseData = buildOptions(exerciseData);
+      // 保留原始完整選擇的題型與標記需要背景補全
+      exerciseData.selectedTypes = selectedTypeList;
+      if (phasedGeneration) {
+        exerciseData.pendingSentenceSync = true;
+        exerciseData.historySummary = historySummary;
+      }
+
       saveToSession('currentExercise', exerciseData);
       window.location.href = 'practice.html';
     } catch (err) {

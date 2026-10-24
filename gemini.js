@@ -672,6 +672,22 @@ export function buildOptions(exerciseData) {
   return exerciseData;
 }
 
+/**
+ * 非同步背景補全題目（專門生成句子題型與干擾選項）
+ */
+export async function generateRemainingSentences(exerciseData) {
+  if (!exerciseData || !exerciseData.words) return null;
+  const sentenceTypes = (exerciseData.selectedTypes || []).filter(t => t === 'sentence' || t === 'spelling');
+  if (sentenceTypes.length === 0) return null;
+
+  const result = await generateExercise(exerciseData.words, exerciseData.lang || 'en', exerciseData.difficulty || 'middle', {
+    selectedTypes: sentenceTypes,
+    historySummary: exerciseData.historySummary || null
+  });
+
+  return buildOptions(result).sentences || [];
+}
+
 /** Fisher-Yates shuffle */
 function shuffle(arr) {
   const a = [...arr];

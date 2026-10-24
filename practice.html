@@ -303,7 +303,8 @@
 
   <script type="module">
     import { requireAuth, logout, saveExercise } from "./firebase-config.js";
-    import { loadFromSession, initTextSelectionTranslator } from "./app.js";
+    import { loadFromSession, saveToSession, initTextSelectionTranslator } from "./app.js";
+    import { generateRemainingSentences } from "./gemini.js";
 
     // 啟動反白文字即時翻譯與單字庫收錄功能
     initTextSelectionTranslator();
@@ -595,6 +596,16 @@
     // Build Sentences (Multiple Choice)
     function buildSentences() {
       secSentence.innerHTML = "";
+      if (exerciseData && exerciseData.pendingSentenceSync) {
+        secSentence.innerHTML = `
+          <div class="p-12 text-center rounded-2xl bg-surface-glass-subtle border border-border-glass-hairline flex flex-col items-center justify-center gap-3">
+            <span class="material-symbols-outlined text-3xl text-primary animate-spin">progress_activity</span>
+            <p class="text-sm font-semibold text-primary">AI 正在背景為您生成句子題型中...</p>
+            <p class="text-xs text-text-dim">您可以先返回「文章填空」開始作答，句子生成完畢將自動呈現！</p>
+          </div>
+        `;
+        return;
+      }
       if (!exerciseData || !exerciseData.sentences || exerciseData.sentences.length === 0) {
         secSentence.innerHTML = '<div class="p-8 text-center text-text-dim text-sm">無句子題目</div>';
         return;
@@ -678,6 +689,16 @@
     // Build Spelling (First and last letter cues, no options)
     function buildSpelling() {
       secSpelling.innerHTML = "";
+      if (exerciseData && exerciseData.pendingSentenceSync) {
+        secSpelling.innerHTML = `
+          <div class="p-12 text-center rounded-2xl bg-surface-glass-subtle border border-border-glass-hairline flex flex-col items-center justify-center gap-3">
+            <span class="material-symbols-outlined text-3xl text-primary animate-spin">progress_activity</span>
+            <p class="text-sm font-semibold text-primary">AI 正在背景為您生成造句手寫題型中...</p>
+            <p class="text-xs text-text-dim">您可以先返回「文章填空」開始作答，手寫題型生成完畢將自動呈現！</p>
+          </div>
+        `;
+        return;
+      }
       if (!exerciseData || !exerciseData.sentences || exerciseData.sentences.length === 0) {
         secSpelling.innerHTML = '<div class="p-8 text-center text-text-dim text-sm">無造句題目</div>';
         return;
@@ -781,23 +802,24 @@
       const hasArticles = (exerciseData.articles || []).length > 0;
       const hasSentences = (exerciseData.sentences || []).length > 0;
       const selectedTypes = exerciseData.selectedTypes || ['article', 'sentence', 'spelling'];
+      const isPendingSync = !!exerciseData.pendingSentenceSync;
 
       if (!hasArticles || !selectedTypes.includes('article')) {
         tabBtnArticle.classList.add('hidden');
       }
-      if (!hasSentences || !selectedTypes.includes('sentence')) {
+      if ((!hasSentences && !isPendingSync) || !selectedTypes.includes('sentence')) {
         tabBtnSentence.classList.add('hidden');
       }
-      if (!hasSentences || !selectedTypes.includes('spelling')) {
+      if ((!hasSentences && !isPendingSync) || !selectedTypes.includes('spelling')) {
         tabBtnSpelling.classList.add('hidden');
       }
 
       // Switch to first available tab
       if (hasArticles && selectedTypes.includes('article')) {
         switchTab("article", tabBtnArticle, secArticle, false);
-      } else if (hasSentences && selectedTypes.includes('sentence')) {
+      } else if ((hasSentences || isPendingSync) && selectedTypes.includes('sentence')) {
         switchTab("sentence", tabBtnSentence, secSentence, false);
-      } else if (hasSentences && selectedTypes.includes('spelling')) {
+      } else if ((hasSentences || isPendingSync) && selectedTypes.includes('spelling')) {
         switchTab("spelling", tabBtnSpelling, secSpelling, true);
       }
 
@@ -805,10 +827,46 @@
       const statusText = document.getElementById("completion-status-text");
       const scoreRatioEl = document.getElementById("res-score-ratio");
       if (statusText) {
-        statusText.textContent = `Evaluation Status: Ready (${initialTotalQuestions} Items Total)`;
+        statusText.textContent = isPendingSync
+          ? `Evaluation Status: 文章已就緒 (句子背景生成中...)`
+          : `Evaluation Status: Ready (${initialTotalQuestions} Items Total)`;
       }
       if (scoreRatioEl) {
         scoreRatioEl.textContent = `0 / ${initialTotalQuestions}`;
+      }
+
+      // ── 背景非同步補全句子與造句題型 ──
+      if (isPendingSync) {
+        // 在背景發起請求，不阻擋使用者作答文章克漏字
+        generateRemainingSentences(exerciseData).then(newSentences => {
+          if (newSentences && newSentences.length > 0) {
+            exerciseData.sentences = newSentences;
+            delete exerciseData.pendingSentenceSync;
+            saveToSession('currentExercise', exerciseData);
+
+            // 重新渲染句子與造句題型
+            buildSentences();
+            buildSpelling();
+
+            // 更新題目總題數與診斷狀態
+            const updatedTotal = computeTotalQuestions(exerciseData);
+            if (statusText) {
+              statusText.textContent = `Evaluation Status: Ready (${updatedTotal} Items Total)`;
+            }
+            if (scoreRatioEl && !tabScores[currentTab].graded) {
+              scoreRatioEl.textContent = `0 / ${updatedTotal}`;
+            }
+
+            showToast("✨ 句子選擇與造句題型已在背景生成完成！");
+          }
+        }).catch(bgErr => {
+          console.warn("Background sentence generation error:", bgErr);
+          delete exerciseData.pendingSentenceSync;
+          saveToSession('currentExercise', exerciseData);
+          if (statusText) {
+            statusText.textContent = `Evaluation Status: Ready (${computeTotalQuestions(exerciseData)} Items Total)`;
+          }
+        });
       }
     } else {
       secArticle.innerHTML = `
