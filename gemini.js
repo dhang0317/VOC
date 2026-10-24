@@ -32,7 +32,25 @@ async function callGemini(prompt) {
     throw new Error("MISSING_API_KEY");
   }
 
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  // 模型備援：主模型失效、額度滿或過載時，自動改用下一個模型
+  const models = [GEMINI_MODEL, "gemini-3.7-flash", "gemini-2.5-flash"];
+  let lastErr;
+  for (const model of models) {
+    try {
+      return await callGeminiModel(prompt, apiKey, model);
+    } catch (e) {
+      lastErr = e;
+      console.warn(`模型 ${model} 失敗:`, e.message);
+      if (/金鑰|API Key 無效/.test(e.message) && !/not found|not supported|404/i.test(e.message)) {
+        // 金鑰問題換模型也沒用，但 400 可能是模型參數不相容，仍繼續嘗試
+      }
+    }
+  }
+  throw lastErr;
+}
+
+async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   // 設置 60 秒超時控制器，防止請求無限卡死
   const controller = new AbortController();
@@ -40,20 +58,21 @@ async function callGemini(prompt) {
 
   let res;
   try {
+    const generationConfig = {
+      temperature: 0.4,
+      maxOutputTokens: 8192,
+      responseMimeType: "application/json"
+    };
+    if (model.includes("3.")) {
+      generationConfig.thinkingConfig = { thinkingLevel: "low" }; // 保持快速回應
+    }
     res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal: controller.signal,
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.4,
-          maxOutputTokens: 8192,
-          responseMimeType: "application/json",
-          thinkingConfig: {
-            thinkingLevel: "low" // 保持快速回應，避免深度思考拖慢出題
-          }
-        }
+        generationConfig
       })
     });
   } catch (fetchErr) {
