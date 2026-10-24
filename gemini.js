@@ -36,11 +36,17 @@ async function callGemini(prompt) {
   const models = [GEMINI_MODEL, "gemini-3.7-flash"];
   let firstErr;
   for (const model of models) {
-    try {
-      return await callGeminiModel(prompt, apiKey, model);
-    } catch (e) {
-      firstErr = firstErr || e; // 保留主模型的真實錯誤訊息
-      console.warn(`模型 ${model} 失敗:`, e.message);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await callGeminiModel(prompt, apiKey, model);
+      } catch (e) {
+        firstErr = firstErr || e; // 保留主模型的真實錯誤訊息
+        console.warn(`模型 ${model} 第 ${attempt + 1} 次失敗:`, e.message);
+        // 過載/暫時性錯誤：等待後重試同一模型
+        const transient = /high demand|overloaded|unavailable|try again|503|429|超時/i.test(e.message);
+        if (!transient) break;
+        await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+      }
     }
   }
   throw firstErr;
