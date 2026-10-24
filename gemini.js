@@ -33,20 +33,17 @@ async function callGemini(prompt) {
   }
 
   // 模型備援：主模型失效、額度滿或過載時，自動改用下一個模型
-  const models = [GEMINI_MODEL, "gemini-3.7-flash", "gemini-2.5-flash"];
-  let lastErr;
+  const models = [GEMINI_MODEL, "gemini-3.7-flash"];
+  let firstErr;
   for (const model of models) {
     try {
       return await callGeminiModel(prompt, apiKey, model);
     } catch (e) {
-      lastErr = e;
+      firstErr = firstErr || e; // 保留主模型的真實錯誤訊息
       console.warn(`模型 ${model} 失敗:`, e.message);
-      if (/金鑰|API Key 無效/.test(e.message) && !/not found|not supported|404/i.test(e.message)) {
-        // 金鑰問題換模型也沒用，但 400 可能是模型參數不相容，仍繼續嘗試
-      }
     }
   }
-  throw lastErr;
+  throw firstErr;
 }
 
 async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
