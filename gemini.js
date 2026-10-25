@@ -2,7 +2,8 @@
 // GEMINI API - 生成填空題邏輯
 // =============================================
 
-const GEMINI_MODEL = "gemini-3.8-flash"; // 升級至官方最新推薦標準模型
+// 採用最新 Flash 輕量模型作為主力，速度快且不易遇到尖峰塞車
+const GEMINI_MODEL = "gemini-3.7-flash"; 
 
 // 金鑰管理工具函式 (儲存於瀏覽器 localStorage)
 export function getApiKey() {
@@ -32,8 +33,8 @@ async function callGemini(prompt) {
     throw new Error("MISSING_API_KEY");
   }
 
-  // 模型備援：主模型失效、額度滿或過載時，自動改用下一個模型
-  const models = [GEMINI_MODEL, "gemini-3.7-flash"];
+  // 模型備援：優先採用 3.7-flash 快速出題，失敗時切換 3.8-flash
+  const models = [GEMINI_MODEL, "gemini-3.8-flash"];
   let firstErr;
   for (const model of models) {
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -514,9 +515,9 @@ function buildPrompt(words, chunks, lang, diffText, isEn, historySummary, select
       "targetWords": ["word1", "word2"],
       "text": "Paragraph naturally using target words.",
       "blanks": [
-        { "word": "word1", "explanation": "必須以【繁體中文】詳細解析（約 30~50 字）：深入說明 word1 在本故事/情境中的語意脈絡、上下文因果關係與搭配用法。" }
+        { "word": "word1", "explanation": "必須以【繁體中文】精準解析（約 15~25 字）：簡述本句上下文語意與關鍵搭配。" }
       ],
-      "explanation": "必須以【繁體中文】概述：1~2 句話說明本篇故事主旨與語境脈絡。"
+      "explanation": "必須以【繁體中文】簡述：1 句話概括主旨。"
     }
   ]` : "";
 
@@ -526,7 +527,7 @@ function buildPrompt(words, chunks, lang, diffText, isEn, historySummary, select
       "items": [
         { 
           "sentence": "Context sentence with ___BLANK___.", 
-          "explanation": "必須以【繁體中文】詳細解析：包含本句完整中文翻譯、上下文語意邏輯，以及為何此處使用 word1 最精準。" 
+          "explanation": "必須以【繁體中文】精簡解析（約 15~25 字）：含句意翻譯與選擇 word1 的語意原因。" 
         }
       ]
     }
@@ -569,17 +570,11 @@ ${wantSentences ? `2. SENTENCE COMPLETION (詞彙單題 / 句子選擇) - GSAT P
 - Contextual Logic: Ensure rich contextual clues, cause-and-effect indicators, or strong collocations are present so students can clearly deduce the intended word.` : ""}
 
 3. PASSAGE GLOSSARY (篇章繁中詞彙對照表):
-- In "glossary", include:
-  * ALL designated Target Words (${words.join(", ")}).
-  * PLUS 3 to 6 key advanced/academic vocabulary words appearing in the generated article or sentences.
-- Each item MUST contain "word" (lowercase base/lemma form), "pos" (part of speech, e.g., n., v., adj., adv.), and "translation" (accurate Traditional Chinese 繁體中文 definition matching the contextual usage).
+- In "glossary", include ONLY the designated Target Words (${words.join(", ")}) with lowercase "word", "pos", and concise "translation" (Traditional Chinese). Do not add extra words.
 
-4. DETAILED EXPLANATION GUIDELINES (詳盡中文解析規範):
-- CRITICAL LANGUAGE REQUIREMENT: ALL "explanation" and "translation" fields MUST BE WRITTEN IN TRADITIONAL CHINESE (所有 explanation 解析與 translation 欄位一律必須使用繁體中文撰寫)！
-- Content of Article/Sentence Explanations:
-  * Provide a clear Traditional Chinese translation of the key sentence or context.
-  * Analyze the grammatical structure, collocation, and logical indicators (語意轉折、因果線索) that pinpoint the correct answer.
-  * Keep explanations rigorous, clear, and pedagogical (like official GSAT/TOEIC answer keys).
+4. CONCISE EXPLANATION GUIDELINES (精準中文解析規範):
+- ALL "explanation" and "translation" MUST BE IN TRADITIONAL CHINESE (繁體中文).
+- Keep each explanation strictly between 15-25 words: focus directly on the decisive context clue or collocation.
 - Output ONLY valid JSON with no markdown wrapping or preamble.`;
   } else {
     // 中文版本精簡 Schema
@@ -588,9 +583,9 @@ ${wantSentences ? `2. SENTENCE COMPLETION (詞彙單題 / 句子選擇) - GSAT P
       "targetWords": ["單字1", "單字2"],
       "text": "融入目標單字的自然文章段落。",
       "blanks": [
-        { "word": "單字1", "explanation": "必須以繁體中文詳細解析：結合上下文因果與語意線索，解析為何此處填入單字1最精準。" }
+        { "word": "單字1", "explanation": "繁體中文精簡解析（15~25字）：說明上下文關鍵線索。" }
       ],
-      "explanation": "文章主旨與情境摘要。"
+      "explanation": "1 句話主旨摘要。"
     }
   ]` : "";
 
@@ -598,14 +593,14 @@ ${wantSentences ? `2. SENTENCE COMPLETION (詞彙單題 / 句子選擇) - GSAT P
     {
       "word": "單字1",
       "items": [
-        { "sentence": "含有___BLANK___的高階語境句子（20~35字複合法則）。", "explanation": "必須以繁體中文解析：提供整句翻譯、語意搭配詞及線索推導說明。" }
+        { "sentence": "含有___BLANK___的高階語境句子（20~35字複合法則）。", "explanation": "繁體中文精簡解析（15~25字）：翻譯與填答理由。" }
       ]
     }
   ]` : "";
 
     const glossarySchemaZh = `  "glossary": [
     {
-      "word": "目標或進階單字",
+      "word": "目標單字",
       "pos": "詞性 (如 n., v., adj.)",
       "translation": "貼合語境的繁體中文釋義"
     }
@@ -623,19 +618,17 @@ ${schemaPartsZh}
 
 命題規範：
 ${wantArticles ? `1. 綜合測驗 / 篇章克漏字：
-- 篇章長度為 150～220 字完整短文，具備明確主題句與轉折邏輯，主題涵蓋人文歷史、科普科技或永續議題。
+- 篇章長度為 120～180 字完整短文，具備明確主題句與轉折邏輯。
 - 依要求將單字自然寫入文章：\n${articleRequests}\n- 單字達 4 個以上請以 \\n\\n 分段。
 - 文章中的目標單字位置必須統一使用 [BLANK_1]、[BLANK_2] 等佔位符，嚴禁直接寫出答案或使用 (1)。
 - 空格前後必須有明確的語境線索與慣用語搭配。` : ""}
 ${wantSentences ? `2. 詞彙單題：
-- 每個單字提供 ${sentsPerWord} 個高鑑別度例句，長度約 20～35 字，採複合句或從屬子句架構。
+- 每個單字提供 ${sentsPerWord} 個高鑑別度例句，長度約 20～30 字。
 - 句子中目標單字請以 ___BLANK___ 代替。
 - 嚴格防漏題規則：目標單字及其衍生詞嚴禁出現在該題句子的其他任何位置！
 - 句意需具備充足的上下文邏輯提示。` : ""}
-3. 篇章詞彙庫 (glossary)：
-- 必須完整列出所有目標單字，外加 3～6 個文章或句子中出現的重要關鍵進階單字。
-- 提供小寫原型 "word"、詞性 "pos" 與切合語境的繁體中文釋義 "translation"。
-4. 解析一律使用繁體中文，詳細說明語意脈絡、句型文法與答題線索。
+3. 篇章詞彙庫 (glossary)：僅需包含本次目標單字之小寫原型、詞性與繁體中文釋義。
+4. 解析一律使用繁體中文，精簡於 15~25 字直指解題關鍵。
 - 只輸出合法 JSON，不要任何多餘外層文字。`;
   }
 }

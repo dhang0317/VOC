@@ -882,7 +882,7 @@
           while (tasks.length > 0) await runTask(tasks.shift());
         };
 
-        Promise.all([worker(), worker()]).then(() => {
+        Promise.all([worker(), worker(), worker()]).then(() => {
           delete exerciseData.pendingSentenceSync;
           delete exerciseData.bgTasks;
           try { saveToSession('currentExercise', exerciseData); } catch (e) {}
