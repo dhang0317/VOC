@@ -63,13 +63,14 @@ async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
   let res;
   try {
     const generationConfig = {
-      temperature: 0.4,
+      temperature: 0.25,
       maxOutputTokens: 8192,
-      responseMimeType: "application/json"
+      responseMimeType: "application/json",
+      thinkingConfig: {
+        thinkingBudget: 0,
+        thinkingLevel: "low"
+      }
     };
-    if (model.includes("3.")) {
-      generationConfig.thinkingConfig = { thinkingLevel: "low" }; // 保持快速回應
-    }
     res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -369,6 +370,48 @@ function setCachedExercise(cacheKey, data) {
  * @param {string}   difficulty - "elementary" | "middle" | "high"
  * @param {object}   options   - 選項配置
  */
+/**
+ * 前端 Adapter：將 AI 輸出的極限壓縮 JSON 映射回既有 UI 元件所需完整資料結構
+ * 壓縮鍵名：
+ * art -> articles, t -> text, tw -> targetWords, b -> blanks, exp -> explanation
+ * w -> word, pos -> pos, zh -> translation
+ * sen -> sentences, itm -> items, s -> sentence
+ * glo -> glossary
+ */
+export function adaptCompactPayload(parsed) {
+  if (!parsed || typeof parsed !== "object") return { articles: [], sentences: [], glossary: [] };
+
+  const rawArts = parsed.art || parsed.articles || [];
+  const articles = rawArts.map(a => ({
+    title: a.title || "Contextual Reading Drill",
+    targetWords: a.tw || a.targetWords || (a.b || a.blanks || []).map(b => b.w || b.word),
+    text: a.t || a.text || "",
+    blanks: (a.b || a.blanks || []).map(b => ({
+      word: b.w || b.word || "",
+      explanation: b.exp || b.explanation || b.zh || ""
+    })),
+    explanation: a.exp || a.explanation || a.zh || ""
+  }));
+
+  const rawSens = parsed.sen || parsed.sentences || [];
+  const sentences = rawSens.map(s => ({
+    word: s.w || s.word || "",
+    items: (s.itm || s.items || []).map(item => ({
+      sentence: item.s || item.sentence || "",
+      explanation: item.exp || item.explanation || item.zh || "",
+      options: item.options || []
+    }))
+  }));
+
+  const rawGlo = parsed.glo || parsed.glossary || [];
+  const glossary = rawGlo.map(g => ({
+    word: (g.w || g.word || "").toLowerCase().trim(),
+    pos: g.pos || g.p || "",
+    translation: g.zh || g.translation || ""
+  }));
+
+  return { articles, sentences, glossary };
+}
 export async function generateExercise(words, lang, difficulty, options = {}) {
   const isAutoWords = options.wordsPerArticle === "auto" || !options.wordsPerArticle;
   const isAutoArticles = options.numArticles === "auto" || !options.numArticles;
@@ -438,7 +481,9 @@ export async function generateExercise(words, lang, difficulty, options = {}) {
   // 2. 構建包含 glossary 的 Prompt 模板
   const prompt = buildPrompt(wordsUsedInArticles, chunks, lang, diffText, isEn, historySummary, selectedTypes);
   const rawText = await callGemini(prompt);
-  const parsed  = parseJSON(rawText);
+  const parsedRaw = parseJSON(rawText);
+  // 透過 Adapter 自動展開壓縮鍵名（art->articles, sen->sentences, glo->glossary）
+  const parsed = adaptCompactPayload(parsedRaw);
 
   // 3. 處理篇章詞彙庫 (Glossary)
   const rawGlossary = Array.isArray(parsed.glossary) ? parsed.glossary : [];
@@ -510,34 +555,35 @@ function buildPrompt(words, chunks, lang, diffText, isEn, historySummary, select
     : "";
 
   if (isEn) {
-    const articlesSchema = wantArticles ? `  "articles": [
+    // 極限壓縮鍵名：art, t, tw, b, w, exp, sen, itm, s, glo, pos, zh (可減少約 35% JSON Token)
+    const articlesSchema = wantArticles ? `  "art": [
     {
-      "targetWords": ["word1", "word2"],
-      "text": "Paragraph naturally using target words.",
-      "blanks": [
-        { "word": "word1", "explanation": "必須以【繁體中文】精準解析（約 15~25 字）：簡述本句上下文語意與關鍵搭配。" }
+      "tw": ["word1", "word2"],
+      "t": "Paragraph naturally using target words.",
+      "b": [
+        { "w": "word1", "exp": "【繁體中文】精準解析（15~25字）：簡述上下文語意與關鍵搭配。" }
       ],
-      "explanation": "必須以【繁體中文】簡述：1 句話概括主旨。"
+      "exp": "【繁體中文】1 句話概括主旨。"
     }
   ]` : "";
 
-    const sentencesSchema = wantSentences ? `  "sentences": [
+    const sentencesSchema = wantSentences ? `  "sen": [
     {
-      "word": "word1",
-      "items": [
+      "w": "word1",
+      "itm": [
         { 
-          "sentence": "Context sentence with ___BLANK___.", 
-          "explanation": "必須以【繁體中文】精簡解析（約 15~25 字）：含句意翻譯與選擇 word1 的語意原因。" 
+          "s": "Context sentence with ___BLANK___.", 
+          "exp": "【繁體中文】精簡解析（15~25字）：含句意翻譯與選擇 word1 理由。" 
         }
       ]
     }
   ]` : "";
 
-    const glossarySchema = `  "glossary": [
+    const glossarySchema = `  "glo": [
     {
-      "word": "target or advanced word in lower case",
-      "pos": "詞性 (如 n., v., adj., adv.)",
-      "translation": "貼合本篇語境的精確繁體中文釋義"
+      "w": "target word",
+      "pos": "n./v./adj.",
+      "zh": "繁體中文精確釋義"
     }
   ]`;
 
@@ -578,31 +624,31 @@ ${wantSentences ? `2. SENTENCE COMPLETION (詞彙單題 / 句子選擇) - GSAT P
 - Output ONLY valid JSON with no markdown wrapping or preamble.`;
   } else {
     // 中文版本精簡 Schema
-    const articlesSchemaZh = wantArticles ? `  "articles": [
+    const articlesSchemaZh = wantArticles ? `  "art": [
     {
-      "targetWords": ["單字1", "單字2"],
-      "text": "融入目標單字的自然文章段落。",
-      "blanks": [
-        { "word": "單字1", "explanation": "繁體中文精簡解析（15~25字）：說明上下文關鍵線索。" }
+      "tw": ["單字1", "單字2"],
+      "t": "融入目標單字的自然文章段落。",
+      "b": [
+        { "w": "單字1", "exp": "繁體中文精簡解析（15~25字）：說明上下文關鍵線索。" }
       ],
-      "explanation": "1 句話主旨摘要。"
+      "exp": "1 句話主旨摘要。"
     }
   ]` : "";
 
-    const sentencesSchemaZh = wantSentences ? `  "sentences": [
+    const sentencesSchemaZh = wantSentences ? `  "sen": [
     {
-      "word": "單字1",
-      "items": [
-        { "sentence": "含有___BLANK___的高階語境句子（20~35字複合法則）。", "explanation": "繁體中文精簡解析（15~25字）：翻譯與填答理由。" }
+      "w": "單字1",
+      "itm": [
+        { "s": "含有___BLANK___的高階語境句子（20~35字）。", "exp": "繁體中文精簡解析（15~25字）：翻譯與填答理由。" }
       ]
     }
   ]` : "";
 
-    const glossarySchemaZh = `  "glossary": [
+    const glossarySchemaZh = `  "glo": [
     {
-      "word": "目標單字",
+      "w": "目標單字",
       "pos": "詞性 (如 n., v., adj.)",
-      "translation": "貼合語境的繁體中文釋義"
+      "zh": "貼合語境的繁體中文釋義"
     }
   ]`;
 

@@ -886,16 +886,22 @@
 
       const sentenceTypeList = selectedTypeList.filter(t => t === 'sentence' || t === 'spelling');
 
-      // 切成小批次：第一批立即出題並跳轉，其餘批次（與第一批的句子題型）於練習頁背景補齊
-      const batches = splitBatches(wordsToUse, currentWordsPerArticle);
-      const firstWords = batches[0];
-      const restBatches = batches.slice(1);
+      // ── 首批出題「微型雙通道並發」（Micro-Chunk Concurrency）──
+      // 通道 A（極速啟動通道）：僅取前 4~5 個單字生成第 1 篇短篇克漏字，以最少 Token 數秒完成並跳轉開考
+      const MICRO_CHUNK_SIZE = (currentWordsPerArticle !== "auto" && Number(currentWordsPerArticle) <= 5)
+        ? Number(currentWordsPerArticle)
+        : Math.min(wordsToUse.length, 4);
+
+      const channelAWords = wordsToUse.slice(0, MICRO_CHUNK_SIZE);
+      const remainingWords = wordsToUse.slice(MICRO_CHUNK_SIZE);
+
       const firstSentencesLater = hasArticle && hasSentences;
       const initialTypes = firstSentencesLater ? ['article'] : selectedTypeList;
 
-      let exerciseData = await generateExercise(firstWords, currentLang, 'middle', {
-        wordsPerArticle: currentWordsPerArticle,
-        numArticles: restBatches.length > 0 ? 'auto' : currentNumArticles,
+      // 發起通道 A（極速跳轉）
+      let exerciseData = await generateExercise(channelAWords, currentLang, 'middle', {
+        wordsPerArticle: MICRO_CHUNK_SIZE,
+        numArticles: 1,
         historySummary,
         selectedTypes: initialTypes
       });
@@ -906,13 +912,22 @@
       exerciseData.wordsPerArticle = currentWordsPerArticle;
       exerciseData.historySummary = historySummary;
 
+      // 通道 B（背景接續通道）：將剩餘單字按批次分組，並包含通道 A 的句子題型，排入背景任務
       const bgTasks = [];
-      if (firstSentencesLater) bgTasks.push({ words: firstWords, types: sentenceTypeList });
-      restBatches.forEach(b => bgTasks.push({ words: b, types: selectedTypeList }));
+      if (firstSentencesLater) {
+        bgTasks.push({ words: channelAWords, types: sentenceTypeList });
+      }
+
+      if (remainingWords.length > 0) {
+        const restBatches = splitBatches(remainingWords, currentWordsPerArticle);
+        restBatches.forEach(b => bgTasks.push({ words: b, types: selectedTypeList }));
+      }
+
       if (bgTasks.length > 0) {
         exerciseData.bgTasks = bgTasks;
         exerciseData.pendingSentenceSync = true;
       }
+
       saveToSession('currentExercise', exerciseData);
       window.location.href = 'practice.html';
     } catch (err) {
