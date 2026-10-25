@@ -631,7 +631,7 @@
           itemBox.className = "p-4 rounded-xl bg-surface-glass-medium border border-border-glass-hairline/60 flex flex-col gap-3";
 
           let sentHtml = item.sentence;
-          const sentBlankRegex = /(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
+          const sentBlankRegex = /\[w\]|(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
           const slotId = `sent-slot-${sIdx}-${iIdx}`;
 
           if (sentBlankRegex.test(sentHtml)) {
@@ -733,7 +733,7 @@
           const inputId = `spell-input-${sIdx}-${iIdx}`;
 
           let sentHtml = item.sentence;
-          const sentBlankRegex = /(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
+          const sentBlankRegex = /\[w\]|(?:_\s*){3,}(?:BLANK(?:_\d+)?(?:\s*_)*)?|\[blank(?:\s*\d+)?\]|___+/gi;
           const cueHtml = `
             <span class="inline-flex items-center gap-1 mx-1.5 px-3 py-1 rounded-full bg-surface-glass-elevated border border-border-glass-active">
               <span class="text-feedback-success font-bold text-sm font-mono">${firstLetter}</span>

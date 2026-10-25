@@ -53,6 +53,61 @@ async function callGemini(prompt) {
   throw firstErr;
 }
 
+/**
+ * 官方推薦 OpenAPI 標準之 responseSchema 結構定義
+ */
+const EXERCISE_RESPONSE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    articles: {
+      type: "ARRAY",
+      description: "篇章克漏字題型清單",
+      items: {
+        type: "OBJECT",
+        properties: {
+          text: {
+            type: "STRING",
+            description: "篇章完整內容，挖空處以 [1], [2] 標記"
+          },
+          blanks: {
+            type: "ARRAY",
+            description: "各挖空依序對應的目標單字",
+            items: { type: "STRING" }
+          },
+          translation: {
+            type: "STRING",
+            description: "篇章完整繁體中文翻譯與解析"
+          }
+        },
+        required: ["text", "blanks", "translation"]
+      }
+    },
+    sentences: {
+      type: "ARRAY",
+      description: "句子選擇與手寫造句題型清單",
+      items: {
+        type: "OBJECT",
+        properties: {
+          text: {
+            type: "STRING",
+            description: "句子題幹，挖空處以 [w] 標記"
+          },
+          targetWord: {
+            type: "STRING",
+            description: "正確答案單字"
+          },
+          translation: {
+            type: "STRING",
+            description: "句子中文翻譯與精準繁中解析"
+          }
+        },
+        required: ["text", "targetWord", "translation"]
+      }
+    }
+  },
+  required: ["articles", "sentences"]
+};
+
 async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -63,9 +118,10 @@ async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
   let res;
   try {
     const generationConfig = {
-      temperature: 0.25,
+      temperature: 0.2,
       maxOutputTokens: 8192,
       responseMimeType: "application/json",
+      responseSchema: EXERCISE_RESPONSE_SCHEMA,
       thinkingConfig: {
         thinkingBudget: 0,
         thinkingLevel: "low"
@@ -130,41 +186,11 @@ async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
  * 解析 JSON，支援帶有 markdown code block 及修復截斷不完整 JSON 的回應
  */
 function parseJSON(text) {
-  let clean = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-  
-  // 優先嘗試標準 JSON 解析
   try {
-    return JSON.parse(clean);
-  } catch (initialErr) {
-    // 若因截斷出現 Unexpected end of JSON，嘗試修補封閉括號
-    let repaired = clean;
-    const openBraces = (repaired.match(/\{/g) || []).length;
-    const closeBraces = (repaired.match(/\}/g) || []).length;
-    const openBrackets = (repaired.match(/\[/g) || []).length;
-    const closeBrackets = (repaired.match(/\]/g) || []).length;
-
-    // 清除結尾不完整的字串或逗號
-    repaired = repaired.replace(/,\s*$/, "");
-    if ((repaired.match(/"/g) || []).length % 2 !== 0) {
-      repaired += '"';
-    }
-
-    for (let i = 0; i < (openBrackets - closeBrackets); i++) repaired += "]";
-    for (let i = 0; i < (openBraces - closeBraces); i++) repaired += "}";
-
-    try {
-      return JSON.parse(repaired);
-    } catch (secondErr) {
-      // 嘗試從字串中尋找最外層的 JSON object
-      const start = clean.indexOf("{");
-      const end = clean.lastIndexOf("}");
-      if (start !== -1 && end > start) {
-        try {
-          return JSON.parse(clean.substring(start, end + 1));
-        } catch (thirdErr) {}
-      }
-      throw new Error("AI 回傳的題目格式不完整，請減少單字數量或重試一次");
-    }
+    return JSON.parse(text);
+  } catch (err) {
+    // 極少數情況若首尾存在零寬空白字元做 trim 防護
+    return JSON.parse(text.trim());
   }
 }
 
@@ -378,36 +404,80 @@ function setCachedExercise(cacheKey, data) {
  * sen -> sentences, itm -> items, s -> sentence
  * glo -> glossary
  */
-export function adaptCompactPayload(parsed) {
+export function adaptStructuredPayload(parsed) {
   if (!parsed || typeof parsed !== "object") return { articles: [], sentences: [], glossary: [] };
 
-  const rawArts = parsed.art || parsed.articles || [];
-  const articles = rawArts.map(a => ({
-    title: a.title || "Contextual Reading Drill",
-    targetWords: a.tw || a.targetWords || (a.b || a.blanks || []).map(b => b.w || b.word),
-    text: a.t || a.text || "",
-    blanks: (a.b || a.blanks || []).map(b => ({
-      word: b.w || b.word || "",
-      explanation: b.exp || b.explanation || b.zh || ""
-    })),
-    explanation: a.exp || a.explanation || a.zh || ""
-  }));
+  // 1. 處理篇章克漏字（支援原生 Schema 的 blanks: ["word1", "word2"] 與物件格式）
+  const rawArts = parsed.articles || parsed.art || [];
+  const articles = rawArts.map(a => {
+    const rawBlanks = a.blanks || a.b || [];
+    const blanks = rawBlanks.map((b, idx) => {
+      if (typeof b === "string") {
+        return {
+          word: b.trim(),
+          explanation: a.translation || "上下文搭配與語意線索推導"
+        };
+      }
+      return {
+        word: b.word || b.w || "",
+        explanation: b.explanation || b.exp || a.translation || ""
+      };
+    });
 
-  const rawSens = parsed.sen || parsed.sentences || [];
-  const sentences = rawSens.map(s => ({
-    word: s.w || s.word || "",
-    items: (s.itm || s.items || []).map(item => ({
-      sentence: item.s || item.sentence || "",
-      explanation: item.exp || item.explanation || item.zh || "",
-      options: item.options || []
-    }))
-  }));
+    const targetWords = a.targetWords || a.tw || blanks.map(b => b.word);
+    return {
+      title: a.title || "Contextual Reading Drill",
+      targetWords,
+      text: a.text || a.t || "",
+      blanks,
+      explanation: a.translation || a.explanation || a.exp || ""
+    };
+  });
 
-  const rawGlo = parsed.glo || parsed.glossary || [];
+  // 2. 處理句子（原生 Schema: { text: "...", targetWord: "...", translation: "..." }）
+  // 依 targetWord 分組轉換為下游 UI 預期的 { word, items: [{ sentence, explanation }] }
+  const rawSens = parsed.sentences || parsed.sen || [];
+  const sentenceGroupsMap = new Map();
+
+  rawSens.forEach(s => {
+    // 支援直接傳入物件或群組形式
+    const targetWord = (s.targetWord || s.word || s.w || "").trim();
+    if (s.items && Array.isArray(s.items)) {
+      // 既有巢狀格式支援
+      sentenceGroupsMap.set(targetWord, {
+        word: targetWord,
+        items: s.items.map(it => ({
+          sentence: it.sentence || it.s || "",
+          explanation: it.explanation || it.exp || it.translation || s.translation || "",
+          options: it.options || []
+        }))
+      });
+    } else {
+      // 原生扁平化 Schema 格式：轉為 1-to-1 item
+      const sentenceText = s.text || s.sentence || s.s || "";
+      const explanation = s.translation || s.explanation || s.exp || "";
+      if (!sentenceGroupsMap.has(targetWord)) {
+        sentenceGroupsMap.set(targetWord, {
+          word: targetWord,
+          items: []
+        });
+      }
+      sentenceGroupsMap.get(targetWord).items.push({
+        sentence: sentenceText,
+        explanation: explanation,
+        options: []
+      });
+    }
+  });
+
+  const sentences = Array.from(sentenceGroupsMap.values());
+
+  // 3. 處理 glossary
+  const rawGlo = parsed.glossary || parsed.glo || [];
   const glossary = rawGlo.map(g => ({
-    word: (g.w || g.word || "").toLowerCase().trim(),
+    word: (g.word || g.w || "").toLowerCase().trim(),
     pos: g.pos || g.p || "",
-    translation: g.zh || g.translation || ""
+    translation: g.translation || g.zh || ""
   }));
 
   return { articles, sentences, glossary };
@@ -483,7 +553,7 @@ export async function generateExercise(words, lang, difficulty, options = {}) {
   const rawText = await callGemini(prompt);
   const parsedRaw = parseJSON(rawText);
   // 透過 Adapter 自動展開壓縮鍵名（art->articles, sen->sentences, glo->glossary）
-  const parsed = adaptCompactPayload(parsedRaw);
+  const parsed = adaptStructuredPayload(parsedRaw);
 
   // 3. 處理篇章詞彙庫 (Glossary)
   const rawGlossary = Array.isArray(parsed.glossary) ? parsed.glossary : [];
@@ -599,21 +669,16 @@ ${schemaParts}
 
 EXAM SPECIFICATIONS & RULES:
 ${wantArticles ? `1. CLOZE TEST (綜合測驗 / 篇章克漏字) - GSAT & CEFR Standard:
-- Length & Structure: Each passage must be a coherent, well-crafted, 150–220 word article featuring a clear introductory topic sentence, logical development with transitional cues, and a conclusion.
-- Passage Topics: Academic/scientific trends, environmental sustainability, humanities, world history, cultural phenomena, or everyday science.
-- Word Integration & Blanks:
-  * Integrate designated target words naturally:\n${articleRequests}
-  * If an article has 4+ words, divide into 2-3 structured paragraphs with double newlines (\\n\\n).
-  * CRITICAL FOR ARTICLE TEXT (文章填空佔位符規範): Every target word in "text" MUST be replaced by an indexed placeholder: [BLANK_1], [BLANK_2], [BLANK_3], etc., matching the exact 1-to-1 order of the items in the "blanks" array.
-  * DO NOT use plain numbers like (1) or (2), and DO NOT leave the raw target word in the text.
-  * Context Clues: Surrounding context MUST provide strong semantic indicators, transition words (e.g., however, consequently, furthermore), or idiomatic collocations so that only the designated target word logically and grammatically fits.` : ""}
+- Length & Structure: Each passage must be a coherent, 120–180 word article with topic sentence, logical transitions, and conclusion.
+- Placeholders for article "text": Replace target words strictly with indexed placeholders [1], [2], [3] matching the 1-to-1 order of the "blanks" array.
+- "blanks" array: Array of exact target words corresponding to [1], [2], [3].
+- "translation": Comprehensive Traditional Chinese (繁體中文) translation & explanation of the passage and contextual clues.` : ""}
 
 ${wantSentences ? `2. SENTENCE COMPLETION (詞彙單題 / 句子選擇) - GSAT Part 1 Standard:
-- Provide ${sentsPerWord} distinct, exam-grade sentence(s) per target word.
-- Complexity & Length: Each sentence must be 20–35 words long, employing compound or complex sentence structures (e.g., relative clauses, participial phrases, concessive or conditional clauses). Avoid overly simple or childish sentences.
-- Placeholders: Replace the target word with the single placeholder: ___BLANK___
-- CRITICAL ANTI-LEAK RULE (嚴格防漏題規則): The target word (and any direct inflected/root forms of it) MUST NOT appear anywhere else in the generated sentence! ___BLANK___ is the ONLY placeholder.
-- Contextual Logic: Ensure rich contextual clues, cause-and-effect indicators, or strong collocations are present so students can clearly deduce the intended word.` : ""}
+- Provide exam-grade sentences (20–30 words) for the target words.
+- Placeholders for sentence "text": Replace the target word strictly with [w].
+- "targetWord": The exact correct target word for this sentence.
+- "translation": Complete Traditional Chinese (繁體中文) sentence translation and rationale.` : ""}
 
 3. PASSAGE GLOSSARY (篇章繁中詞彙對照表):
 - In "glossary", include ONLY the designated Target Words (${words.join(", ")}) with lowercase "word", "pos", and concise "translation" (Traditional Chinese). Do not add extra words.
