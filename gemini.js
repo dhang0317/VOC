@@ -695,6 +695,30 @@ export function buildOptions(exerciseData) {
 }
 
 /**
+ * 大量單字分批：把任意數量（150、1000…）的單字切成小批次，每批各自出題
+ */
+export function splitBatches(words, wordsPerArticle) {
+  const wpa = parseInt(wordsPerArticle, 10);
+  const size = wpa > 0 ? wpa * Math.max(1, Math.floor(12 / wpa)) : 12;
+  const batches = [];
+  for (let i = 0; i < words.length; i += size) batches.push(words.slice(i, i + size));
+  return batches;
+}
+
+/**
+ * 針對單一批次單字生成題型並合成干擾選項
+ */
+export async function generateBatch(words, meta, types) {
+  const result = await generateExercise(words, meta.lang || 'en', meta.difficulty || 'middle', {
+    wordsPerArticle: meta.wordsPerArticle,
+    numArticles: 'auto',
+    historySummary: meta.historySummary || null,
+    selectedTypes: types
+  });
+  return buildOptions(result);
+}
+
+/**
  * 非同步背景補全題目（專門生成句子題型與干擾選項）
  */
 export async function generateRemainingSentences(exerciseData) {

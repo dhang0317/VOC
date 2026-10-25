@@ -254,7 +254,7 @@
 <!-- Script for Micro-Interactions -->
 <script type="module">
   import { requireAuth, logout, getMyExercises } from "./firebase-config.js";
-  import { generateExercise, buildOptions, getApiKey, setApiKey } from "./gemini.js";
+  import { generateExercise, buildOptions, getApiKey, setApiKey, splitBatches } from "./gemini.js";
   import { saveToSession, smartExtractWords, showConfirmModal, showPromptModal } from "./app.js";
 
   // ── Multi-Bank State Management ──
@@ -847,9 +847,7 @@
         wordsToUse = wordsToUse.slice(0, needed);
       }
     } else {
-      if (wordsToUse.length > 25) {
-        wordsToUse = wordsToUse.slice(0, 25);
-      }
+      // 大量單字不再截斷：改為分批出題，第一批完成即跳轉，其餘於練習頁背景補齊
     }
 
     const useHistory = adaptiveToggle ? adaptiveToggle.checked : true;
@@ -886,25 +884,35 @@
       const hasArticle = selectedTypeList.includes('article');
       const hasSentences = selectedTypeList.includes('sentence') || selectedTypeList.includes('spelling');
 
-      // 若同時選了文章與句子題型，先極速生成文章題型並立馬跳轉，句子題型在 practice.html 背景非同步補齊
-      const phasedGeneration = hasArticle && hasSentences;
-      const initialTypes = phasedGeneration ? ['article'] : selectedTypeList;
+      const sentenceTypeList = selectedTypeList.filter(t => t === 'sentence' || t === 'spelling');
 
-      let exerciseData = await generateExercise(wordsToUse, currentLang, 'middle', {
+      // 切成小批次：第一批立即出題並跳轉，其餘批次（與第一批的句子題型）於練習頁背景補齊
+      const batches = splitBatches(wordsToUse, currentWordsPerArticle);
+      const firstWords = batches[0];
+      const restBatches = batches.slice(1);
+      const firstSentencesLater = hasArticle && hasSentences;
+      const initialTypes = firstSentencesLater ? ['article'] : selectedTypeList;
+
+      let exerciseData = await generateExercise(firstWords, currentLang, 'middle', {
         wordsPerArticle: currentWordsPerArticle,
-        numArticles: currentNumArticles,
+        numArticles: restBatches.length > 0 ? 'auto' : currentNumArticles,
         historySummary,
         selectedTypes: initialTypes
       });
 
       exerciseData = buildOptions(exerciseData);
-      // 保留原始完整選擇的題型與標記需要背景補全
       exerciseData.selectedTypes = selectedTypeList;
-      if (phasedGeneration) {
-        exerciseData.pendingSentenceSync = true;
-        exerciseData.historySummary = historySummary;
-      }
+      exerciseData.words = wordsToUse;
+      exerciseData.wordsPerArticle = currentWordsPerArticle;
+      exerciseData.historySummary = historySummary;
 
+      const bgTasks = [];
+      if (firstSentencesLater) bgTasks.push({ words: firstWords, types: sentenceTypeList });
+      restBatches.forEach(b => bgTasks.push({ words: b, types: selectedTypeList }));
+      if (bgTasks.length > 0) {
+        exerciseData.bgTasks = bgTasks;
+        exerciseData.pendingSentenceSync = true;
+      }
       saveToSession('currentExercise', exerciseData);
       window.location.href = 'practice.html';
     } catch (err) {

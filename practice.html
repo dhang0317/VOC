@@ -304,7 +304,7 @@
   <script type="module">
     import { requireAuth, logout, saveExercise } from "./firebase-config.js";
     import { loadFromSession, saveToSession, initTextSelectionTranslator } from "./app.js";
-    import { generateRemainingSentences } from "./gemini.js";
+    import { generateBatch } from "./gemini.js";
 
     // 啟動反白文字即時翻譯與單字庫收錄功能
     initTextSelectionTranslator();
@@ -452,14 +452,15 @@
     }
 
     // Build Articles
-    function buildArticles() {
-      secArticle.innerHTML = "";
+    function buildArticles(from = 0) {
+      if (from === 0) secArticle.innerHTML = "";
       if (!exerciseData || !exerciseData.articles || exerciseData.articles.length === 0) {
         secArticle.innerHTML = '<div class="p-8 text-center text-text-dim text-sm">無文章題目</div>';
         return;
       }
 
       exerciseData.articles.forEach((art, aIdx) => {
+        if (aIdx < from) return;
         articleAnswers[aIdx] = {};
         const card = document.createElement("article");
         card.className = "rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 md:p-8 flex flex-col gap-5 shadow-2xl";
@@ -594,9 +595,9 @@
     }
 
     // Build Sentences (Multiple Choice)
-    function buildSentences() {
-      secSentence.innerHTML = "";
-      if (exerciseData && exerciseData.pendingSentenceSync) {
+    function buildSentences(from = 0) {
+      if (from === 0) secSentence.innerHTML = "";
+      if (exerciseData && exerciseData.pendingSentenceSync && !(exerciseData.sentences || []).length) {
         secSentence.innerHTML = `
           <div class="p-12 text-center rounded-2xl bg-surface-glass-subtle border border-border-glass-hairline flex flex-col items-center justify-center gap-3">
             <span class="material-symbols-outlined text-3xl text-primary animate-spin">progress_activity</span>
@@ -612,6 +613,7 @@
       }
 
       exerciseData.sentences.forEach((group, sIdx) => {
+        if (sIdx < from) return;
         sentenceAnswers[sIdx] = {};
         const card = document.createElement("div");
         card.className = "rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 flex flex-col gap-4 shadow-xl";
@@ -687,9 +689,9 @@
     }
 
     // Build Spelling (First and last letter cues, no options)
-    function buildSpelling() {
-      secSpelling.innerHTML = "";
-      if (exerciseData && exerciseData.pendingSentenceSync) {
+    function buildSpelling(from = 0) {
+      if (from === 0) secSpelling.innerHTML = "";
+      if (exerciseData && exerciseData.pendingSentenceSync && !(exerciseData.sentences || []).length) {
         secSpelling.innerHTML = `
           <div class="p-12 text-center rounded-2xl bg-surface-glass-subtle border border-border-glass-hairline flex flex-col items-center justify-center gap-3">
             <span class="material-symbols-outlined text-3xl text-primary animate-spin">progress_activity</span>
@@ -705,6 +707,7 @@
       }
 
       exerciseData.sentences.forEach((group, sIdx) => {
+        if (sIdx < from) return;
         spellingAnswers[sIdx] = {};
         const card = document.createElement("div");
         card.className = "rounded-2xl bg-surface-glass-subtle backdrop-blur-2xl border border-border-glass-hairline p-6 flex flex-col gap-4 shadow-xl";
@@ -835,37 +838,58 @@
         scoreRatioEl.textContent = `0 / ${initialTotalQuestions}`;
       }
 
-      // ── 背景非同步補全句子與造句題型 ──
+      // ── 背景分批補全其餘題目（支援 150～1000+ 單字）──
       if (isPendingSync) {
-        // 在背景發起請求，不阻擋使用者作答文章克漏字
-        generateRemainingSentences(exerciseData).then(newSentences => {
-          if (newSentences && newSentences.length > 0) {
-            exerciseData.sentences = newSentences;
-            delete exerciseData.pendingSentenceSync;
-            saveToSession('currentExercise', exerciseData);
+        const tasks = [...(exerciseData.bgTasks || [{ words: exerciseData.words, types: selectedTypes.filter(t => t === 'sentence' || t === 'spelling') }])];
+        const totalTasks = tasks.length;
+        let doneTasks = 0;
+        let failedTasks = 0;
 
-            // 重新渲染句子與造句題型
-            buildSentences();
-            buildSpelling();
-
-            // 更新題目總題數與診斷狀態
-            const updatedTotal = computeTotalQuestions(exerciseData);
-            if (statusText) {
-              statusText.textContent = `Evaluation Status: Ready (${updatedTotal} Items Total)`;
-            }
-            if (scoreRatioEl && !tabScores[currentTab].graded) {
-              scoreRatioEl.textContent = `0 / ${updatedTotal}`;
-            }
-
-            showToast("✨ 句子選擇與造句題型已在背景生成完成！");
-          }
-        }).catch(bgErr => {
-          console.warn("Background sentence generation error:", bgErr);
-          delete exerciseData.pendingSentenceSync;
-          saveToSession('currentExercise', exerciseData);
+        const refreshStatus = () => {
+          const total = computeTotalQuestions(exerciseData);
           if (statusText) {
-            statusText.textContent = `Evaluation Status: Ready (${computeTotalQuestions(exerciseData)} Items Total)`;
+            statusText.textContent = exerciseData.pendingSentenceSync
+              ? `背景生成中 ${doneTasks}/${totalTasks} 批 (目前 ${total} 題)`
+              : `Evaluation Status: Ready (${total} Items Total)`;
           }
+          if (scoreRatioEl && !tabScores[currentTab].graded) scoreRatioEl.textContent = `0 / ${total}`;
+        };
+
+        const runTask = async (task) => {
+          try {
+            const res = await generateBatch(task.words, exerciseData, task.types);
+            const aFrom = (exerciseData.articles || []).length;
+            const sFrom = (exerciseData.sentences || []).length;
+            exerciseData.articles = (exerciseData.articles || []).concat(res.articles || []);
+            exerciseData.sentences = (exerciseData.sentences || []).concat(res.sentences || []);
+            exerciseData.glossary = (exerciseData.glossary || []).concat(res.glossary || []);
+            // 僅追加新題目，不重繪既有題目以保留使用者已填答案
+            if ((res.articles || []).length) buildArticles(aFrom);
+            if ((res.sentences || []).length) {
+              buildSentences(sFrom);
+              buildSpelling(sFrom);
+            }
+          } catch (e) {
+            failedTasks++;
+            console.warn("Background batch failed:", e);
+          }
+          doneTasks++;
+          if (doneTasks >= totalTasks) delete exerciseData.pendingSentenceSync;
+          refreshStatus();
+        };
+
+        const worker = async () => {
+          while (tasks.length > 0) await runTask(tasks.shift());
+        };
+
+        Promise.all([worker(), worker()]).then(() => {
+          delete exerciseData.pendingSentenceSync;
+          delete exerciseData.bgTasks;
+          try { saveToSession('currentExercise', exerciseData); } catch (e) {}
+          refreshStatus();
+          showToast(failedTasks > 0
+            ? `背景生成完成，其中 ${failedTasks} 批因 AI 忙碌略過`
+            : "✨ 全部題目已在背景生成完成！");
         });
       }
     } else {
@@ -939,6 +963,10 @@
 
     // Submit & Grade (Only current tab answers)
     document.getElementById("btn-submit")?.addEventListener("click", async () => {
+      if (exerciseData && exerciseData.pendingSentenceSync) {
+        showToast("後續題目仍在背景生成中，請等全部載入完成再核對答案！");
+        return;
+      }
       if (submittedTabs[currentTab]) {
         showToast("當前分頁已經核對過答案囉！若有其他題型請切換上方分頁作答。");
         return;
