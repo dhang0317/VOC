@@ -121,11 +121,9 @@ async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
       temperature: 0.2,
       maxOutputTokens: 8192,
       responseMimeType: "application/json",
-      responseSchema: EXERCISE_RESPONSE_SCHEMA
+      responseSchema: EXERCISE_RESPONSE_SCHEMA,
+      thinkingConfig: { thinkingBudget: 0 }
     };
-    if (model.includes("2.5")) {
-      generationConfig.thinkingConfig = { thinkingBudget: 0 };
-    }
     res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
