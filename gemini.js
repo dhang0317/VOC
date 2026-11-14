@@ -3,7 +3,7 @@
 // =============================================
 
 // 採用最新 Flash 輕量模型作為主力，速度快且不易遇到尖峰塞車
-const GEMINI_MODEL = "gemini-3.7-flash"; 
+const GEMINI_MODEL = "gemini-2.5-flash"; 
 
 // 金鑰管理工具函式 (儲存於瀏覽器 localStorage)
 export function getApiKey() {
@@ -33,8 +33,8 @@ async function callGemini(prompt) {
     throw new Error("MISSING_API_KEY");
   }
 
-  // 模型備援：優先採用 3.7-flash 快速出題，失敗時切換 3.8-flash
-  const models = [GEMINI_MODEL, "gemini-3.8-flash"];
+  // 模型備援：優先採用 2.5-flash 快速出題，失敗時切換 2.0-flash
+  const models = [GEMINI_MODEL, "gemini-2.0-flash"];
   let firstErr;
   for (const model of models) {
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -121,12 +121,11 @@ async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
       temperature: 0.2,
       maxOutputTokens: 8192,
       responseMimeType: "application/json",
-      responseSchema: EXERCISE_RESPONSE_SCHEMA,
-      thinkingConfig: {
-        thinkingBudget: 0,
-        thinkingLevel: "low"
-      }
+      responseSchema: EXERCISE_RESPONSE_SCHEMA
     };
+    if (model.includes("2.5")) {
+      generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    }
     res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -149,7 +148,7 @@ async function callGeminiModel(prompt, apiKey, model, useThinking = true) {
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
     const message = errData?.error?.message || `HTTP ${res.status}`;
-    if (res.status === 400 || res.status === 403) {
+    if (res.status === 403 || /API_KEY_INVALID|API key not valid/i.test(message)) {
       throw new Error(`API Key 無效或權限不足 (${message})，請檢查設定。`);
     }
     throw new Error(`Gemini API 請求失敗: ${message}`);
