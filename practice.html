@@ -962,6 +962,7 @@
 
     // Submit & Grade (Only current tab answers)
     document.getElementById("btn-submit")?.addEventListener("click", async () => {
+      try {
       if (exerciseData && exerciseData.pendingSentenceSync) {
         showToast("後續題目仍在背景生成中，請等全部載入完成再核對答案！");
         return;
@@ -1152,6 +1153,10 @@
         } catch (saveErr) {
           console.error("Auto-save error:", saveErr);
         }
+      }
+      } catch (err) {
+        console.error("Submit grading error:", err);
+        showToast("對答案時發生錯誤：" + (err.message || "未知錯誤"), "error");
       }
     });
   </script>
