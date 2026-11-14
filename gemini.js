@@ -3,7 +3,7 @@
 // =============================================
 
 // 採用最新 Flash 輕量模型作為主力，速度快且不易遇到尖峰塞車
-const GEMINI_MODEL = "gemini-2.5-flash"; 
+const GEMINI_MODEL = "gemini-3.8-flash"; 
 
 // 金鑰管理工具函式 (儲存於瀏覽器 localStorage)
 export function getApiKey() {
@@ -33,8 +33,8 @@ async function callGemini(prompt) {
     throw new Error("MISSING_API_KEY");
   }
 
-  // 模型備援：優先採用 2.5-flash 快速出題，失敗時切換 2.0-flash
-  const models = [GEMINI_MODEL, "gemini-2.0-flash"];
+  // 模型列表：採用官方推薦的 gemini-3.8-flash
+  const models = [GEMINI_MODEL];
   let firstErr;
   for (const model of models) {
     for (let attempt = 0; attempt < 3; attempt++) {
